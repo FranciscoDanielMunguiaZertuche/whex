@@ -220,7 +220,7 @@ Include `if` stmt in for-in loops
 Use `Array.isArray()` vs `instanceof Array`
 Return consistent values in iterable callbacks
 Use `namespace` keyword vs `module` keyword
-Use digits arg w/ `Number#toFixed()`
+Use digits arg w/ `Number.prototype.toFixed()`
 Use static `Response` methods vs `new Response()`
 Use `use strict` directive in script files
 No passing children as props. Nest children between opening and closing tags
