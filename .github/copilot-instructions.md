@@ -2,38 +2,7 @@
 applyTo: "**/*.{ts,tsx,js,jsx}"
 ---
 
-Avoid `accessKey` attr and distracting els
-No `aria-hidden="true"` on focusable els
-No ARIA roles, states, props on unsupported els
-Use `scope` prop only on `<th>` els
-No non-interactive ARIA roles on interactive els
-Label els need text and associated input
 No event handlers on non-interactive els
-No interactive ARIA roles on non-interactive els
-No `tabIndex` on non-interactive els
-No positive integers on `tabIndex` prop
-No `image`, `picture`, or `photo` in img alt props
-No explicit role matching implicit role
-Valid role attrs on static, visible els w/ click handlers
-Use `title` el for `svg` els
-Provide meaningful alt text for all els requiring it
-Anchors need accessible content
-Assign `tabIndex` to non-interactive els w/ `aria-activedescendant`
-Include all required ARIA attrs for els w/ ARIA roles
-Use valid ARIA props for the el's role
-Use `type` attr on `button` els
-Make els w/ interactive roles and handlers focusable
-Heading els need accessible content
-Add `lang` attr to `html` el
-Use `title` attr on `iframe` els
-Pair `onClick` w/ `onKeyUp`, `onKeyDown`, or `onKeyPress`
-Pair `onMouseOver`/`onMouseOut` w/ `onFocus`/`onBlur`
-Add caption tracks to audio and video els
-Use semantic els vs role attrs
-All anchors must be valid and navigable
-Use valid, non-abstract ARIA props, roles, states, and values
-Use valid values for `autocomplete` attr
-Use correct ISO language codes in `lang` attr
 Include generic font family in font families
 No consecutive spaces in regex literals
 Avoid `arguments`, comma op, and primitive type aliases
@@ -70,23 +39,18 @@ No `__dirname` and `__filename` in global scope
 No calling global object props as fns or declaring fns and `var` accessible outside their block
 Instantiate builtins correctly
 Use `super()` correctly in classes
-Use standard direction values for linear gradient fns
-Use valid named grid areas in CSS Grid Layouts
-Use `@import` at-rules in valid positions
 No vars and params before their decl
-Include `var` fn for CSS vars
 No `\8` and `\9` escape sequences in strings
 No literal numbers that lose precision, configured els, or assigning where both sides are same
 Compare string case modifications w/ compliant values
 No lexical decls in switch clauses or undeclared vars
-No unknown CSS value fns, media feature names, props, pseudo-class/pseudo-element selectors, type selectors, or units
-No unmatchable An+B selectors or unreachable code
+No unreachable code
 Call `super()` exactly once before accessing `this` in ctors
 No control flow stmts in `finally` blocks
 No optional chaining where `undefined` is not allowed
 No unused fn params, imports, labels, private class members, or vars
 No return values from fns w/ return type `void`
-Specify all dependencies correctly in React hooks and names for GraphQL operations
+Specify all dependencies correctly in React hooks
 Call React hooks from top level of component fns
 Use `isNaN()` when checking for NaN
 Use `{ type: "json" }` for JSON module imports
@@ -98,17 +62,11 @@ Include `yield` in generator fns
 No importing deprecated exports, duplicate dependencies, or Promises where they're likely a mistake
 No non-null assertions after optional chaining or shadowing vars from outer scope
 No expr stmts that aren't fn calls or assignments or useless `undefined`
-Add `href` attr to `<a>` els and `width`/`height` attrs to `<img>` els
 Use consistent arrow fn bodies and either `interface` or `type` consistently
 Specify deletion date w/ `@deprecated` directive
 Make switch-case stmts exhaustive and limit number of fn params
-Sort CSS utility classes
-No spread syntax on accumulators, barrel files, `delete` op, dynamic namespace import access, namespace imports, or duplicate polyfills from Polyfill.io
-Use `preconnect` attr w/ Google Fonts
+No spread syntax on accumulators, barrel files, `delete` op, dynamic namespace import access, or namespace imports
 Declare regex literals at top level
-Add `rel="noopener"` when using `target="_blank"`
-No dangerous JSX props
-No both `children` and `dangerouslySetInnerHTML` props
 No global `eval()`
 No callbacks in async tests and hooks, TS enums, exporting imported vars, type annotations for vars initialized w/ literals, magic numbers without named constants, or TS namespaces
 No negating `if` conditions when there's an `else` clause, nested ternary exprs, non-null assertions (`!`), reassigning fn params, parameter props in class ctors, specified global var names, importing specified modules, or specified user-defined types
@@ -134,8 +92,6 @@ Use `<>...</>` vs `<Fragment>...</Fragment>`
 Capitalize all enum values
 Place getters and setters for same prop adjacent
 Use literal values for all enum members
-Use `node:assert/strict` vs `node:assert`
-Use `node:` protocol for Node.js builtin modules
 Use `Number` props vs global ones
 Use numeric separators in numeric literals
 Use object spread vs `Object.assign()` for new objects
@@ -149,9 +105,6 @@ Use `new` when throwing an error
 No throwing non-`Error` values
 Use `String.trimStart()`/`String.trimEnd()` vs `String.trimLeft()`/`String.trimRight()`
 No overload signatures that can be unified
-No lower specificity selectors after higher specificity selectors
-No `@value` rule in CSS modules
-No `alert`, `confirm`, and `prompt`
 Use standard constants vs approximated literals
 No assigning in exprs
 No async fns as Promise executors
@@ -168,10 +121,9 @@ No TS const enums
 No exprs where op doesn't affect value
 No control chars in regex literals
 No `debugger`
-No assigning directly to `document.cookie`
 Use `===` and `!==`
-No duplicate `@import` rules, case labels, class members, custom props, conditions in if-else-if chains, GraphQL fields, font family names, object keys, fn param names, decl block props, keyframe selectors, or describe hooks
-No empty CSS blocks, block stmts, static blocks, or interfaces
+No duplicate case labels, class members, conditions in if-else-if chains, font family names, object keys, fn param names, or describe hooks
+No empty block stmts, static blocks, or interfaces
 No letting vars evolve into `any` type through reassignments
 No `any` type
 No `export` or `module.exports` in test files
@@ -183,7 +135,6 @@ No assigning to native objects and read-only global vars
 Use `Number.isFinite` and `Number.isNaN` vs global `isFinite` and `isNaN`
 No implicit `any` type on var decls
 No assigning to imported bindings
-No `!important` within keyframe decls
 No irregular whitespace chars
 No labels that share name w/ var
 No chars made w/ multiple code points in char classes
@@ -203,7 +154,6 @@ No template literal placeholder syntax in regular strings
 No `then` prop
 No `@ts-ignore` directive
 No `let` or `var` vars that are read but never assigned
-No unknown at-rules
 No merging interface and class decls unsafely
 No unsafe negation (`!`)
 No unnecessary escapes in strings or useless backreferences in regex literals
@@ -215,7 +165,6 @@ Use correct syntax for ignoring folders in config
 Put default clauses in switch stmts last
 Pass message value when creating built-in errors
 Return value from get methods
-Use recommended display strategy w/ Google Fonts
 Include `if` stmt in for-in loops
 Use `Array.isArray()` vs `instanceof Array`
 Return consistent values in iterable callbacks
@@ -226,8 +175,6 @@ Use `use strict` directive in script files
 No passing children as props. Nest children between opening and closing tags
 No defining comps inside other comps
 No reassigning props in React comps
-No using return value from `ReactDOM.render()`
-No adding children to void els like `<img>` and `<br>`
 Specify all dependencies correctly in React hooks
 Call React hooks from top level of comp fns only
 Add `key` prop to els in iterables
