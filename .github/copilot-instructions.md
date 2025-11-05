@@ -2,6 +2,268 @@
 applyTo: "**/*.{ts,tsx,js,jsx}"
 ---
 
+# Whex - GitHub Copilot Instructions
+
+## Project Overview
+
+This is a **mobile-first iOS productivity application** (React Native/Expo) with a backend API server for **AI-powered life orchestration and daily task execution**.
+
+**Target Users:** Ambitious professionals (28-45), freelancers, and entrepreneurs ("The Overwhelmed Achiever") who need to unify their purpose, goals, and daily execution in one intelligent app.
+
+**Core Functionality:**
+- AI Mentor chat interface for strategic guidance and task management
+- Unified daily inbox combining tasks, calendar events, and AI-curated emails/messages
+- Intelligent calendar with time-blocking and schedule optimization
+- Purpose-driven goal tracking with weekly/monthly reviews
+- Natural language task capture with AI parsing
+- Full-context AI that understands user's purpose, values, goals, schedule, and communications
+
+**Key Business Rules:**
+- Mobile-first design with thumb-friendly bottom navigation (5 tabs: Chat, Today, +, Calendar, You)
+- All AI responses must be <2 seconds (target <1.5s)
+- Privacy-first: Users can mark events/tasks as "Private" (excluded from AI context)
+- Free tier with GPT-4o, Premium tier with GPT-4.5-Preview/Claude Opus 4.1
+- Maximum 3 priority tasks per day (AI-enforced focus)
+- All user data encrypted at rest
+- Onboarding must achieve first win (add task) in <60 seconds
+
+---
+
+## Tech Stack
+
+### Backend
+- **Framework:** Hono (lightweight web framework)
+- **Language:** TypeScript 5.8 (strict mode enabled)
+- **Runtime:** Bun 1.3.1 (JavaScript runtime)
+- **Database:** 
+  - Primary: PostgreSQL with Drizzle ORM
+  - Managed via Docker Compose for local development
+- **Authentication:** Better Auth (with @better-auth/expo for mobile)
+- **API Style:** tRPC 11.5 (type-safe RPC) + REST endpoints for auth
+- **AI Integration:** OpenAI GPT-4o / GPT-4.5-Preview, Anthropic Claude (planned)
+
+### Mobile (Native)
+- **Framework:** Expo 54 with Expo Router 6 (file-based routing)
+- **Language:** TypeScript 5.3+ (strict mode enabled)
+- **UI Framework:** React Native 0.81.4 with React 19.1
+- **Navigation:** Expo Router with drawer and bottom tabs
+- **Styling:** React Native Unistyles 3.0 (theme system with breakpoints)
+- **State Management:** 
+  - TanStack Query 5.85 for server state
+  - tRPC React Query integration
+  - TanStack Form 1.0 for form state
+- **Animations:** React Native Reanimated 4.1 + React Native Worklets
+- **Gestures:** React Native Gesture Handler 2.28
+- **Storage:** Expo Secure Store for sensitive data (tokens, sessions)
+
+### Infrastructure
+- **Hosting:** TBD (likely Vercel for API + Expo EAS for mobile builds)
+- **CI/CD:** TBD (likely GitHub Actions)
+- **Monitoring:** TBD (likely Sentry for errors)
+- **Database Hosting:** TBD (likely Supabase or Railway for PostgreSQL)
+- **Testing:**
+  - Unit: Not yet configured (Vitest recommended)
+  - Integration: Not yet configured
+  - E2E: Not yet configured (Maestro recommended for React Native)
+
+### Development Tools
+- **Package Manager:** Bun 1.3.1 (workspaces-enabled)
+- **Monorepo Tool:** Turborepo 2.5.4
+- **Code Quality:** Biome 2.3.2 (linter + formatter), Ultracite presets, TypeScript strict mode
+- **Database Migrations:** Drizzle Kit 0.31.2
+- **Build Tool:** tsdown 0.15.5 (TypeScript bundler for packages)
+
+---
+
+## Project Structure
+
+```
+/
+├── apps/                           # Applications (monorepo)
+│   ├── native/                     # Expo React Native mobile app (primary)
+│   │   ├── app/                    # Expo Router file-based routing
+│   │   │   ├── _layout.tsx         # Root layout with providers
+│   │   │   ├── (drawer)/           # Drawer navigator (main app)
+│   │   │   │   ├── _layout.tsx     # Drawer layout
+│   │   │   │   ├── index.tsx       # Default drawer screen
+│   │   │   │   └── (tabs)/         # Bottom tab navigator (5 screens)
+│   │   │   │       ├── _layout.tsx # Tab bar layout
+│   │   │   │       ├── index.tsx   # "Today" screen
+│   │   │   │       └── two.tsx     # Example second tab
+│   │   │   ├── modal.tsx           # Quick Add (+) modal
+│   │   │   └── +not-found.tsx      # 404 screen
+│   │   ├── components/             # Shared React Native components
+│   │   │   ├── container.tsx
+│   │   │   ├── sign-in.tsx
+│   │   │   ├── sign-up.tsx
+│   │   │   └── tabbar-icon.tsx
+│   │   ├── lib/                    # Client libraries
+│   │   │   └── auth-client.ts      # Better Auth client config
+│   │   ├── utils/                  # Utilities
+│   │   │   └── trpc.ts             # tRPC React Query client setup
+│   │   ├── assets/images/          # Static assets
+│   │   ├── theme.ts                # Unistyles theme definition
+│   │   ├── unistyles.ts            # Unistyles configuration
+│   │   ├── breakpoints.ts          # Responsive breakpoints
+│   │   ├── index.js                # Expo entry point
+│   │   └── package.json
+│   │
+│   └── server/                     # Hono API server
+│       ├── src/
+│       │   └── index.ts            # Main server file (Hono + tRPC + Better Auth)
+│       ├── tsdown.config.ts        # Build configuration
+│       └── package.json
+│
+├── packages/                       # Shared libraries (monorepo packages)
+│   ├── api/                        # tRPC API router definitions
+│   │   ├── src/
+│   │   │   ├── index.ts            # tRPC setup (routers, procedures)
+│   │   │   ├── context.ts          # Request context (session, headers)
+│   │   │   └── routers/
+│   │   │       └── index.ts        # App router (combines all routers)
+│   │   ├── tsdown.config.ts
+│   │   └── package.json
+│   │
+│   ├── auth/                       # Better Auth configuration
+│   │   ├── src/
+│   │   │   └── index.ts            # Auth setup (providers, plugins)
+│   │   ├── tsdown.config.ts
+│   │   └── package.json
+│   │
+│   └── db/                         # Database layer (Drizzle ORM)
+│       ├── src/
+│       │   ├── index.ts            # Database client export
+│       │   ├── schema/             # Drizzle schema definitions
+│       │   │   └── auth.ts         # Auth tables (user, session, account, verification)
+│       │   └── migrations/         # Auto-generated SQL migrations
+│       ├── docker-compose.yml      # Local PostgreSQL container
+│       ├── drizzle.config.ts       # Drizzle Kit configuration
+│       └── package.json
+│
+├── .github/
+│   └── copilot-instructions.md     # This file
+│
+├── docs/                           # Project documentation
+│   └── prd.md                      # Product Requirements Document (2.0)
+│
+├── biome.json                      # Biome linter/formatter config
+├── turbo.json                      # Turborepo task pipeline config
+├── tsconfig.json                   # Root TypeScript config
+├── tsconfig.base.json              # Shared TypeScript config
+├── bunfig.toml                     # Bun runtime configuration
+└── package.json                    # Root workspace package.json
+```
+
+---
+
+## Architecture Notes
+
+### Authentication Flow
+- Better Auth handles all auth logic (email/password, OAuth providers)
+- Expo client uses `@better-auth/expo` for mobile-specific token storage (Expo Secure Store)
+- Sessions managed via JWT tokens with refresh token rotation
+- Auth endpoints exposed at `/api/auth/*` on the server
+- tRPC procedures use `protectedProcedure` for authenticated routes
+
+### Data Flow
+1. **Mobile App** (Expo) → tRPC Client → HTTP/WebSocket
+2. **API Server** (Hono) → tRPC Router → Context (session validation)
+3. **Database** (PostgreSQL) ← Drizzle ORM ← API Layer
+4. **AI Integration** (planned): Server-side OpenAI/Anthropic API calls with context assembly
+
+### Key Design Patterns
+- **Monorepo with Workspaces**: Bun workspaces + Turborepo for task orchestration
+- **Type-safe API**: tRPC ensures end-to-end type safety (mobile ↔ server)
+- **Schema-first Database**: Drizzle schema definitions generate TypeScript types
+- **File-based Routing**: Expo Router uses filesystem for navigation structure
+- **Shared Packages**: `@whex/api`, `@whex/auth`, `@whex/db` are workspace dependencies
+
+### Performance Targets (from PRD)
+- AI response time: <2 seconds (target <1.5s)
+- Message send acknowledgment: <100ms
+- List scroll: 60fps with 100+ items
+- Calendar render: <500ms (1 month of events)
+- Modal open animation: <300ms
+
+---
+
+## Development Commands
+
+### Global Commands (from root)
+- `bun check` - Run Biome linter/formatter (with auto-fix)
+- `bun dev` - Start all apps in dev mode (Turborepo)
+- `bun build` - Build all packages
+- `bun check-types` - Run TypeScript type checking
+
+### Mobile App (Native)
+- `bun dev:native` - Start Expo dev server
+- `cd apps/native && bun android` - Run on Android emulator
+- `cd apps/native && bun ios` - Run on iOS simulator
+
+### API Server
+- `bun dev:server` - Start Hono server with hot reload
+
+### Database (PostgreSQL + Drizzle)
+- `bun db:start` - Start PostgreSQL container (detached)
+- `bun db:watch` - Start PostgreSQL container (logs visible)
+- `bun db:stop` - Stop PostgreSQL container
+- `bun db:down` - Stop and remove PostgreSQL container
+- `bun db:push` - Push schema changes to database
+- `bun db:generate` - Generate SQL migrations from schema
+- `bun db:migrate` - Run migrations
+- `bun db:studio` - Open Drizzle Studio (database GUI)
+
+---
+
+## Coding Conventions
+
+### General TypeScript
+- Use **arrow functions** for all function expressions
+- Use **const** for all variables that aren't reassigned
+- Prefer **`T[]`** over **`Array<T>`** for array types
+- Use **template literals** over string concatenation
+- Use **object spread** (`{ ...obj }`) over `Object.assign()`
+- Use **optional chaining** (`?.`) and **nullish coalescing** (`??`)
+- No `any` types - use `unknown` or proper type definitions
+- No `var` - use `const` or `let`
+- No `console.*` in production code (use proper logging)
+
+### React/React Native
+- Use **function components** only (no class components)
+- Call React hooks from **top level** of component functions only
+- Specify **all dependencies** correctly in `useEffect`, `useMemo`, `useCallback`
+- Use **arrow function bodies** consistently
+- No passing children as props - nest between opening/closing tags
+- Add **`key` prop** to elements in iterables (no array indices as keys)
+- No array indices as keys (use stable IDs)
+
+### File Organization
+- Use **kebab-case** for all filenames (e.g., `sign-in.tsx`, not `SignIn.tsx`)
+- Export types with **`export type`**, not **`export`**
+- Import types with **`import type`**, not **`import`**
+- Group imports: external packages → workspace packages → relative imports
+
+### tRPC Procedures
+- Use `publicProcedure` for unauthenticated endpoints
+- Use `protectedProcedure` for authenticated endpoints (auto-checks session)
+- Always validate inputs with **Zod schemas**
+- Return consistent error shapes (tRPC `TRPCError`)
+
+### Database (Drizzle)
+- Define all schemas in `packages/db/src/schema/`
+- Use **snake_case** for column names (e.g., `created_at`)
+- Use **camelCase** for TypeScript field names (Drizzle auto-converts)
+- Always add `.notNull()` or default values to columns
+- Use `timestamp()` for dates, not `date()`
+
+### Styling (React Native Unistyles)
+- Define all theme tokens in `apps/native/theme.ts`
+- Use theme colors, spacing, and typography from `theme` object
+- Use breakpoints for responsive layouts (defined in `breakpoints.ts`)
+- No inline styles - use `StyleSheet.create()` or Unistyles
+
+---
+
 No event handlers on non-interactive els
 Include generic font family in font families
 No consecutive spaces in regex literals
