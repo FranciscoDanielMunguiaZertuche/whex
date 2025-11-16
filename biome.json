@@ -20,7 +20,9 @@
       "!**/.alchemy",
       "!**/.svelte-kit",
       "!**/wrangler.jsonc",
-      "!**/.source"
+      "!**/.source",
+      "!**/seed.ts",
+      "!**/migrations"
     ]
   },
   "extends": ["ultracite/core", "ultracite/react"]

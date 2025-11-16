@@ -1,4 +1,14 @@
-import { boolean, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import {
+  boolean,
+  integer,
+  pgTable,
+  text,
+  timestamp,
+} from "drizzle-orm/pg-core";
+
+const DEFAULT_WORK_START = 9;
+const DEFAULT_WORK_END = 17;
+const DEFAULT_WEEK_START = 1;
 
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
@@ -6,10 +16,17 @@ export const user = pgTable("user", {
   email: text("email").notNull().unique(),
   emailVerified: boolean("email_verified").notNull(),
   image: text("image"),
+  northStar: text("north_star"), // Purpose statement from onboarding
+  coreValues: text("core_values"), // JSON array of values
+  peakEnergyHours: text("peak_energy_hours"), // JSON array like ["9", "10", "11"]
+  workingHoursStart: integer("working_hours_start").default(DEFAULT_WORK_START), // 9am
+  workingHoursEnd: integer("working_hours_end").default(DEFAULT_WORK_END), // 5pm
+  aiPersonality: text("ai_personality").default("balanced"), // 'supportive', 'balanced', 'direct'
+  weekStartDay: integer("week_start_day").default(DEFAULT_WEEK_START), // 0=Sunday, 1=Monday
+  subscriptionTier: text("subscription_tier").default("free"), // 'free', 'premium'
   createdAt: timestamp("created_at").notNull(),
   updatedAt: timestamp("updated_at").notNull(),
 });
-
 export const session = pgTable("session", {
   id: text("id").primaryKey(),
   expiresAt: timestamp("expires_at").notNull(),
