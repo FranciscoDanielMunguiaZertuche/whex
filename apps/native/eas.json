@@ -1,0 +1,14 @@
+{
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal"
+    },
+    "ci-unsigned": {
+      "extends": "development",
+      "ios": {
+        "simulator": false
+      }
+    }
+  }
+}

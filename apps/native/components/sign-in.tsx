@@ -6,11 +6,12 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { StyleSheet } from "react-native-unistyles";
+import { createStyleSheet, useStyles } from "react-native-unistyles";
 import { authClient } from "@/lib/auth-client";
 import { queryClient } from "@/utils/trpc";
 
 export function SignIn() {
+  const { styles } = useStyles(stylesheet);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -84,7 +85,7 @@ export function SignIn() {
   );
 }
 
-const styles = StyleSheet.create((theme) => ({
+const stylesheet = createStyleSheet((theme) => ({
   container: {
     marginTop: 24,
     padding: 16,

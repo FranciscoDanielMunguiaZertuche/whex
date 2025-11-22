@@ -1,8 +1,9 @@
 import { ScrollView, Text, View } from "react-native";
-import { StyleSheet } from "react-native-unistyles";
+import { createStyleSheet, useStyles } from "react-native-unistyles";
 import { Container } from "@/components/container";
 
 export default function TabTwo() {
+  const { styles } = useStyles(stylesheet);
   return (
     <Container>
       <ScrollView contentContainerStyle={styles.container}>
@@ -17,7 +18,7 @@ export default function TabTwo() {
   );
 }
 
-const styles = StyleSheet.create((theme) => ({
+const stylesheet = createStyleSheet((theme) => ({
   container: {
     padding: theme.spacing.lg,
   },

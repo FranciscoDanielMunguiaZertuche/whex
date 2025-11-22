@@ -1,11 +1,12 @@
 import { Link, Stack } from "expo-router";
 import { Text, View } from "react-native";
-import { StyleSheet } from "react-native-unistyles";
+import { createStyleSheet, useStyles } from "react-native-unistyles";
 import { Container } from "@/components/container";
 
 const BUTTON_VERTICAL_PADDING_OFFSET = 4;
 
 export default function NotFoundScreen() {
+  const { styles } = useStyles(stylesheet);
   return (
     <>
       <Stack.Screen options={{ title: "Oops!" }} />
@@ -27,7 +28,7 @@ export default function NotFoundScreen() {
   );
 }
 
-const styles = StyleSheet.create((theme) => ({
+const stylesheet = createStyleSheet((theme) => ({
   container: {
     flex: 1,
     justifyContent: "center",

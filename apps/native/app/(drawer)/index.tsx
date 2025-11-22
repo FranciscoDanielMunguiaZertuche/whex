@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
-import { StyleSheet } from "react-native-unistyles";
+import { createStyleSheet, useStyles } from "react-native-unistyles";
 import { Container } from "@/components/container";
 import { SignIn } from "@/components/sign-in";
 import { SignUp } from "@/components/sign-up";
@@ -8,6 +8,7 @@ import { authClient } from "@/lib/auth-client";
 import { queryClient, trpc } from "@/utils/trpc";
 
 export default function Home() {
+  const { styles } = useStyles(stylesheet);
   const healthCheck = useQuery(trpc.healthCheck.queryOptions());
   const privateData = useQuery(trpc.privateData.queryOptions());
   const { data: session } = authClient.useSession();
@@ -81,7 +82,7 @@ export default function Home() {
   );
 }
 
-const styles = StyleSheet.create((theme) => ({
+const stylesheet = createStyleSheet((theme) => ({
   pageContainer: {
     paddingHorizontal: 8,
   },

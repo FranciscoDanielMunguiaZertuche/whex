@@ -1,10 +1,11 @@
-import { Tabs } from "expo-router";
+import { Tabs, useRouter } from "expo-router";
 import { useUnistyles } from "react-native-unistyles";
 
 import { TabBarIcon } from "@/components/tabbar-icon";
 
 export default function TabLayout() {
   const { theme } = useUnistyles();
+  const router = useRouter();
 
   return (
     <Tabs
@@ -21,17 +22,44 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: "Home",
-          tabBarIcon: ({ color }) => <TabBarIcon color={color} name="home" />,
+          title: "Today",
+          tabBarIcon: ({ color }) => <TabBarIcon color={color} name="sun" />,
+        }}
+      />
+      <Tabs.Screen
+        listeners={() => ({
+          tabPress: (e) => {
+            e.preventDefault();
+            router.push("/modal");
+          },
+        })}
+        name="create"
+        options={{
+          title: "",
+          tabBarIcon: () => (
+            <TabBarIcon
+              color={theme.colors.primary}
+              name="plus-circle"
+              size={32}
+            />
+          ),
+          tabBarLabel: () => null,
         }}
       />
       <Tabs.Screen
         name="two"
         options={{
-          title: "Explore",
+          title: "Calendar",
           tabBarIcon: ({ color }) => (
-            <TabBarIcon color={color} name="compass" />
+            <TabBarIcon color={color} name="calendar" />
           ),
+        }}
+      />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: "You",
+          tabBarIcon: ({ color }) => <TabBarIcon color={color} name="user" />,
         }}
       />
     </Tabs>

@@ -1,4 +1,5 @@
 import { auth } from "@whex/auth";
+import { db } from "@whex/db";
 import type { Context as HonoContext } from "hono";
 
 export type CreateContextOptions = {
@@ -11,6 +12,7 @@ export async function createContext({ context }: CreateContextOptions) {
   });
   return {
     session,
+    db,
   };
 }
 
