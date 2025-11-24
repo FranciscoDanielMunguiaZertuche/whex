@@ -19,11 +19,6 @@ jobs:
         with:
           bun-version: latest
 
-      - name: Setup Node 18
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18
-
       - name: Setup Expo
         uses: expo/expo-github-action@v8
         with:
