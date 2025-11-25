@@ -1,11 +1,15 @@
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Stack, useRouter, useSegments } from "expo-router";
+import { hideAsync, preventAutoHideAsync } from "expo-splash-screen";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useUnistyles } from "react-native-unistyles";
 import { authClient } from "@/lib/auth-client";
 import { queryClient } from "@/utils/trpc";
+
+// Keep the splash screen visible while we fetch resources
+preventAutoHideAsync();
 
 export const unstable_settings = {
   initialRouteName: "(drawer)",
@@ -21,6 +25,13 @@ export default function RootLayout() {
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  // Hide splash screen once session state is resolved
+  useEffect(() => {
+    if (!isPending) {
+      hideAsync();
+    }
+  }, [isPending]);
 
   useEffect(() => {
     if (!isMounted || isPending) {
