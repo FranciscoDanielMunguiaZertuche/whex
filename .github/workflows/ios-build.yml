@@ -36,7 +36,7 @@ jobs:
         run: |
           bun expo export --platform ios
           mkdir -p ios/whex
-          cp dist/_expo/static/js/ios/*.js ios/whex/main.jsbundle
+          cp dist/_expo/static/js/ios/*.hbc ios/whex/main.jsbundle
           cp -r dist/assets ios/whex/ 2>/dev/null || true
 
       - name: Build Archive
