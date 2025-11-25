@@ -1,7 +1,7 @@
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Stack, useRouter, useSegments } from "expo-router";
 import { hideAsync, preventAutoHideAsync } from "expo-splash-screen";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ActivityIndicator, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useUnistyles } from "react-native-unistyles";
@@ -10,6 +10,8 @@ import { queryClient } from "@/utils/trpc";
 
 // Keep the splash screen visible while we fetch resources
 preventAutoHideAsync();
+
+const SPLASH_TIMEOUT_MS = 5000;
 
 export const unstable_settings = {
   initialRouteName: "(drawer)",
@@ -21,16 +23,34 @@ export default function RootLayout() {
   const segments = useSegments();
   const router = useRouter();
   const [isMounted, setIsMounted] = useState(false);
+  const splashHidden = useRef(false);
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
-  // Hide splash screen once session state is resolved
+  // Hide splash screen once session state is resolved OR after timeout
   useEffect(() => {
-    if (!isPending) {
-      hideAsync();
+    if (splashHidden.current) {
+      return;
     }
+
+    // Hide immediately if not pending
+    if (!isPending) {
+      splashHidden.current = true;
+      hideAsync();
+      return;
+    }
+
+    // Fallback: hide splash after timeout even if still pending
+    const timeout = setTimeout(() => {
+      if (!splashHidden.current) {
+        splashHidden.current = true;
+        hideAsync();
+      }
+    }, SPLASH_TIMEOUT_MS);
+
+    return () => clearTimeout(timeout);
   }, [isPending]);
 
   useEffect(() => {

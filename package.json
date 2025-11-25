@@ -18,7 +18,7 @@
   },
   "scripts": {
     "check": "biome check --write .",
-    "dev": "turbo dev",
+    "dev": "bun sync-env && turbo dev",
     "build": "turbo build",
     "check-types": "turbo check-types",
     "dev:native": "turbo -F native dev",
@@ -31,7 +31,8 @@
     "db:start": "turbo -F @whex/db db:start",
     "db:watch": "turbo -F @whex/db db:watch",
     "db:stop": "turbo -F @whex/db db:stop",
-    "db:down": "turbo -F @whex/db db:down"
+    "db:down": "turbo -F @whex/db db:down",
+    "sync-env": "bun scripts/sync-env.ts"
   },
   "dependencies": {
     "dotenv": "^17.2.3",
