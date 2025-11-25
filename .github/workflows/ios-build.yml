@@ -34,12 +34,10 @@ jobs:
 
       - name: Bundle JavaScript
         run: |
-          bunx @react-native-community/cli bundle \
-            --platform ios \
-            --dev false \
-            --entry-file index.js \
-            --bundle-output ios/whex/main.jsbundle \
-            --assets-dest ios/whex
+          bun expo export --platform ios
+          mkdir -p ios/whex
+          cp dist/_expo/static/js/ios/*.js ios/whex/main.jsbundle
+          cp -r dist/assets ios/whex/ 2>/dev/null || true
 
       - name: Build Archive
         run: |
