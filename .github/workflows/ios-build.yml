@@ -34,12 +34,12 @@ jobs:
 
       - name: Bundle JavaScript
         run: |
-          bunx react-native bundle \
+          bunx @react-native-community/cli bundle \
             --platform ios \
             --dev false \
             --entry-file index.js \
-            --bundle-output ios/main.jsbundle \
-            --assets-dest ios
+            --bundle-output ios/whex/main.jsbundle \
+            --assets-dest ios/whex
 
       - name: Build Archive
         run: |
