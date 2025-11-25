@@ -21,6 +21,11 @@ jobs:
           echo "server_url=$SERVER_URL" >> $GITHUB_OUTPUT
           echo "Using server URL: $SERVER_URL"
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
       - name: Setup Bun
         uses: oven-sh/setup-bun@v1
         with:
@@ -36,23 +41,30 @@ jobs:
         run: bun install
         working-directory: .
 
-      - name: Prebuild
-        run: bun expo prebuild --platform ios
+      - name: Prebuild iOS
+        run: bun expo prebuild --platform ios --clean
         env:
           EXPO_PUBLIC_SERVER_URL: ${{ steps.config.outputs.server_url }}
 
-      - name: Bundle JavaScript
+      - name: Setup Xcode environment
         run: |
-          bun expo export --platform ios
-          mkdir -p ios/whex
-          cp dist/_expo/static/js/ios/*.hbc ios/whex/main.jsbundle
-          cp -r dist/assets ios/whex/ 2>/dev/null || true
-        env:
-          EXPO_PUBLIC_SERVER_URL: ${{ steps.config.outputs.server_url }}
+          # Create .xcode.env.local to ensure env vars are available during build
+          echo "export EXPO_PUBLIC_SERVER_URL=${{ steps.config.outputs.server_url }}" > ios/.xcode.env.local
+          echo "export NODE_BINARY=$(which node)" >> ios/.xcode.env.local
+          cat ios/.xcode.env.local
 
-      - name: Build Archive
+      - name: Install CocoaPods
         run: |
           cd ios
+          pod install
+
+      - name: Build Archive (with bundling)
+        run: |
+          cd ios
+          
+          # Ensure Node is available for the Xcode build script
+          export NODE_BINARY=$(which node)
+          
           xcodebuild -workspace *.xcworkspace \
             -scheme whex \
             -configuration Release \
@@ -64,11 +76,24 @@ jobs:
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGN_STYLE=Manual
+        env:
+          EXPO_PUBLIC_SERVER_URL: ${{ steps.config.outputs.server_url }}
+
+      - name: Verify bundle in archive
+        run: |
+          echo "=== Contents of .app bundle ==="
+          ls -la ios/build/MyApp.xcarchive/Products/Applications/*.app/ || echo "Could not list .app contents"
+          
+          echo "=== Checking for main.jsbundle ==="
+          find ios/build -name "main.jsbundle" -o -name "*.jsbundle" 2>/dev/null || echo "No jsbundle found"
+          
+          echo "=== Checking bundle size ==="
+          ls -lh ios/build/MyApp.xcarchive/Products/Applications/*.app/main.jsbundle 2>/dev/null || echo "main.jsbundle not found in .app"
 
       - name: Package IPA
         run: |
           cd ios
-          mkdir Payload
+          mkdir -p Payload
           cp -r build/MyApp.xcarchive/Products/Applications/*.app Payload/
           zip -r MyApp-Unsigned.ipa Payload
 
