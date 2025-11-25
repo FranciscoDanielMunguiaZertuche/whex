@@ -58,7 +58,7 @@ This is a **mobile-first iOS productivity application** (React Native/Expo) with
 
 ### Infrastructure
 - **Hosting:** TBD (likely Vercel for API + Expo EAS for mobile builds)
-- **CI/CD:** TBD (likely GitHub Actions)
+- **CI/CD:** GitHub Actions (`.github/workflows/ios-build.yml` for iOS builds)
 - **Monitoring:** TBD (likely Sentry for errors)
 - **Database Hosting:** TBD (likely Supabase or Railway for PostgreSQL)
 - **Testing:**
@@ -83,17 +83,23 @@ This is a **mobile-first iOS productivity application** (React Native/Expo) with
 │   ├── native/                     # Expo React Native mobile app (primary)
 │   │   ├── app/                    # Expo Router file-based routing
 │   │   │   ├── _layout.tsx         # Root layout with providers
+│   │   │   ├── (auth)/             # Auth route group
+│   │   │   │   ├── _layout.tsx     # Auth layout
+│   │   │   │   ├── sign-in.tsx     # Sign in screen
+│   │   │   │   └── sign-up.tsx     # Sign up screen
 │   │   │   ├── (drawer)/           # Drawer navigator (main app)
 │   │   │   │   ├── _layout.tsx     # Drawer layout
 │   │   │   │   ├── index.tsx       # Default drawer screen
-│   │   │   │   └── (tabs)/         # Bottom tab navigator (5 screens)
+│   │   │   │   └── (tabs)/         # Bottom tab navigator
 │   │   │   │       ├── _layout.tsx # Tab bar layout
 │   │   │   │       ├── index.tsx   # "Today" screen
-│   │   │   │       └── two.tsx     # Example second tab
+│   │   │   │       ├── profile.tsx # Profile/"You" screen
+│   │   │   │       └── two.tsx     # Example tab
 │   │   │   ├── modal.tsx           # Quick Add (+) modal
 │   │   │   └── +not-found.tsx      # 404 screen
 │   │   ├── components/             # Shared React Native components
 │   │   │   ├── container.tsx
+│   │   │   ├── header-button.tsx
 │   │   │   ├── sign-in.tsx
 │   │   │   ├── sign-up.tsx
 │   │   │   └── tabbar-icon.tsx
@@ -120,7 +126,8 @@ This is a **mobile-first iOS productivity application** (React Native/Expo) with
 │   │   │   ├── index.ts            # tRPC setup (routers, procedures)
 │   │   │   ├── context.ts          # Request context (session, headers)
 │   │   │   └── routers/
-│   │   │       └── index.ts        # App router (combines all routers)
+│   │   │       ├── index.ts        # App router (combines all routers)
+│   │   │       └── task.ts         # Task-related procedures
 │   │   ├── tsdown.config.ts
 │   │   └── package.json
 │   │
@@ -133,15 +140,20 @@ This is a **mobile-first iOS productivity application** (React Native/Expo) with
 │   └── db/                         # Database layer (Drizzle ORM)
 │       ├── src/
 │       │   ├── index.ts            # Database client export
-│       │   ├── schema/             # Drizzle schema definitions
-│       │   │   └── auth.ts         # Auth tables (user, session, account, verification)
-│       │   └── migrations/         # Auto-generated SQL migrations
+│       │   └── schema/             # Drizzle schema definitions
+│       │       ├── auth.ts         # Auth tables (user, session, account, verification)
+│       │       └── app.ts          # App tables (tasks, goals, etc.)
 │       ├── docker-compose.yml      # Local PostgreSQL container
 │       ├── drizzle.config.ts       # Drizzle Kit configuration
 │       └── package.json
 │
-├── .github/
-│   └── copilot-instructions.md     # This file
+├── .github/                        # GitHub configuration
+│   ├── copilot-instructions.md     # This file
+│   └── workflows/
+│       └── ios-build.yml           # iOS build workflow (unsigned)
+│
+├── .vscode/
+│   └── settings.json               # VS Code workspace settings
 │
 ├── docs/                           # Project documentation
 │   └── prd.md                      # Product Requirements Document (2.0)
