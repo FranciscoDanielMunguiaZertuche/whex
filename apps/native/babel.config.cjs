@@ -1,11 +1,12 @@
-export default (api) => {
+"use strict";
+module.exports = (api) => {
   api.cache(true);
   const plugins = [];
 
   plugins.push([
     "react-native-unistyles/plugin",
     {
-      root: import.meta.dirname,
+      root: __dirname,
     },
   ]);
   plugins.push("react-native-reanimated/plugin");
