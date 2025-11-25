@@ -9,9 +9,11 @@ import { authClient } from "@/lib/auth-client";
 import { queryClient } from "@/utils/trpc";
 
 // Keep the splash screen visible while we fetch resources
-preventAutoHideAsync();
+preventAutoHideAsync().catch(() => {
+  /* Splash screen already hidden or not available */
+});
 
-const SPLASH_TIMEOUT_MS = 5000;
+const SPLASH_TIMEOUT_MS = 3000; // Reduced to 3s for better UX
 
 export const unstable_settings = {
   initialRouteName: "(drawer)",
@@ -19,57 +21,67 @@ export const unstable_settings = {
 
 export default function RootLayout() {
   const { theme } = useUnistyles();
-  const { data: session, isPending } = authClient.useSession();
+  const { data: session, isPending, error } = authClient.useSession();
   const segments = useSegments();
   const router = useRouter();
   const [isMounted, setIsMounted] = useState(false);
+  const [timedOut, setTimedOut] = useState(false);
   const splashHidden = useRef(false);
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
-  // Hide splash screen once session state is resolved OR after timeout
+  // Force hide splash screen after timeout, regardless of auth state
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (!splashHidden.current) {
+        splashHidden.current = true;
+        setTimedOut(true);
+        hideAsync().catch(() => {
+          /* ignore */
+        });
+      }
+    }, SPLASH_TIMEOUT_MS);
+
+    return () => clearTimeout(timeout);
+  }, []);
+
+  // Hide splash screen once session state is resolved
   useEffect(() => {
     if (splashHidden.current) {
       return;
     }
 
-    // Hide immediately if not pending
+    // Hide immediately if not pending (success or error)
     if (!isPending) {
       splashHidden.current = true;
-      hideAsync();
-      return;
+      hideAsync().catch(() => {
+        /* ignore */
+      });
     }
-
-    // Fallback: hide splash after timeout even if still pending
-    const timeout = setTimeout(() => {
-      if (!splashHidden.current) {
-        splashHidden.current = true;
-        hideAsync();
-      }
-    }, SPLASH_TIMEOUT_MS);
-
-    return () => clearTimeout(timeout);
   }, [isPending]);
 
   useEffect(() => {
-    if (!isMounted || isPending) {
+    // Allow navigation once mounted AND (auth resolved OR timed out)
+    if (!isMounted || (isPending && !timedOut)) {
       return;
     }
 
     const inAuthGroup = segments[0] === "(auth)";
 
-    if (!(session || inAuthGroup)) {
+    // If timed out or error, redirect to sign-in
+    if (timedOut || error || !(session || inAuthGroup)) {
       // Redirect to the sign-in page.
       router.replace("/(auth)/sign-in");
     } else if (session && inAuthGroup) {
       // Redirect away from the sign-in page.
       router.replace("/(drawer)/(tabs)");
     }
-  }, [session, segments, isPending, isMounted, router]);
+  }, [session, segments, isPending, isMounted, router, timedOut, error]);
 
-  if (isPending) {
+  // Show loading state only briefly - will timeout after 3s
+  if (isPending && !timedOut) {
     return (
       <View
         style={{
