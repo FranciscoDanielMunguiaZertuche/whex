@@ -9,12 +9,15 @@ const secureStoreStorage = {
   setItemAsync,
 };
 
+// Get server URL from environment or fallback
+const serverUrl = process.env.EXPO_PUBLIC_SERVER_URL ?? "http://localhost:3000";
+
 export const authClient = createAuthClient({
-  baseURL: process.env.EXPO_PUBLIC_SERVER_URL,
+  baseURL: serverUrl,
   plugins: [
     expoClient({
-      scheme: Constants.expoConfig?.scheme as string,
-      storagePrefix: Constants.expoConfig?.scheme as string,
+      scheme: Constants.expoConfig?.scheme ?? "mybettertapp",
+      storagePrefix: Constants.expoConfig?.scheme ?? "mybettertapp",
       storage: secureStoreStorage,
     }),
   ],

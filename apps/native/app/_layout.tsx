@@ -1,12 +1,72 @@
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Stack, useRouter, useSegments } from "expo-router";
 import { hideAsync, preventAutoHideAsync } from "expo-splash-screen";
-import { useEffect, useRef, useState } from "react";
-import { ActivityIndicator, View } from "react-native";
+import type { ErrorInfo, ReactNode } from "react";
+import { Component, useEffect, useRef, useState } from "react";
+import { ActivityIndicator, Text, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useUnistyles } from "react-native-unistyles";
 import { authClient } from "@/lib/auth-client";
 import { queryClient } from "@/utils/trpc";
+
+// Error boundary to catch JS errors and show them instead of white screen
+const ERROR_STACK_MAX_LENGTH = 500;
+
+class ErrorBoundary extends Component<
+  { children: ReactNode },
+  { hasError: boolean; error: Error | null }
+> {
+  constructor(props: { children: ReactNode }) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(_error: Error, _errorInfo: ErrorInfo) {
+    // Error logged for debugging
+    // Force hide splash screen so error is visible
+    hideAsync().catch(() => {
+      /* ignore */
+    });
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            padding: 20,
+            backgroundColor: "#fff",
+          }}
+        >
+          <Text style={{ color: "red", fontSize: 18, marginBottom: 10 }}>
+            App Error
+          </Text>
+          <Text style={{ color: "#333", fontSize: 14, textAlign: "center" }}>
+            {this.state.error?.message ?? "Unknown error"}
+          </Text>
+          <Text
+            style={{
+              color: "#666",
+              fontSize: 12,
+              marginTop: 10,
+              textAlign: "center",
+            }}
+          >
+            {this.state.error?.stack?.substring(0, ERROR_STACK_MAX_LENGTH)}
+          </Text>
+        </View>
+      );
+    }
+    return this.props.children;
+  }
+}
 
 // Keep the splash screen visible while we fetch resources
 preventAutoHideAsync().catch(() => {
@@ -20,6 +80,14 @@ export const unstable_settings = {
 };
 
 export default function RootLayout() {
+  return (
+    <ErrorBoundary>
+      <RootLayoutContent />
+    </ErrorBoundary>
+  );
+}
+
+function RootLayoutContent() {
   const { theme } = useUnistyles();
   const { data: session, isPending, error } = authClient.useSession();
   const segments = useSegments();
@@ -27,6 +95,11 @@ export default function RootLayout() {
   const [isMounted, setIsMounted] = useState(false);
   const [timedOut, setTimedOut] = useState(false);
   const splashHidden = useRef(false);
+
+  // Fallback colors in case theme isn't ready
+  const backgroundColor = theme?.colors?.background ?? "#ffffff";
+  const primaryColor = theme?.colors?.primary ?? "#000000";
+  const foregroundColor = theme?.colors?.foreground ?? "#000000";
 
   useEffect(() => {
     setIsMounted(true);
@@ -88,10 +161,10 @@ export default function RootLayout() {
           flex: 1,
           justifyContent: "center",
           alignItems: "center",
-          backgroundColor: theme.colors.background,
+          backgroundColor,
         }}
       >
-        <ActivityIndicator color={theme.colors.primary} size="large" />
+        <ActivityIndicator color={primaryColor} size="large" />
       </View>
     );
   }
@@ -102,12 +175,12 @@ export default function RootLayout() {
         <Stack
           screenOptions={{
             headerStyle: {
-              backgroundColor: theme.colors.background,
+              backgroundColor,
             },
             headerTitleStyle: {
-              color: theme.colors.foreground,
+              color: foregroundColor,
             },
-            headerTintColor: theme.colors.foreground,
+            headerTintColor: foregroundColor,
           }}
         >
           <Stack.Screen name="(drawer)" options={{ headerShown: false }} />
