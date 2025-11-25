@@ -34,7 +34,12 @@ jobs:
 
       - name: Bundle JavaScript
         run: |
-          bun expo export:embed --platform ios --entry-file index.js --bundle-output ios/whex/main.jsbundle --assets-dest ios
+          bunx react-native bundle \
+            --platform ios \
+            --dev false \
+            --entry-file index.js \
+            --bundle-output ios/main.jsbundle \
+            --assets-dest ios
 
       - name: Build Archive
         run: |
