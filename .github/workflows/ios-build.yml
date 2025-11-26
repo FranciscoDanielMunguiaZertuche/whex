@@ -66,14 +66,19 @@ jobs:
           # Create a stub for react-native-unistyles so imports don't break
           echo "=== Creating unistyles stub ==="
           mkdir -p node_modules/react-native-unistyles
-          
-          # Write stub files using printf to avoid YAML parsing issues
           printf '%s\n' 'const mockTheme = { colors: { background: "#ffffff", foreground: "#000000", primary: "#007AFF", secondary: "#5856D6", muted: "#8E8E93", border: "#C6C6C8", card: "#F2F2F7", notification: "#FF3B30" }, spacing: { xs: 4, sm: 8, md: 16, lg: 24, xl: 32 } };' > node_modules/react-native-unistyles/index.js
           printf '%s\n' 'module.exports = { useUnistyles: () => ({ theme: mockTheme, styles: {} }), createStyleSheet: (fn) => typeof fn === "function" ? fn(mockTheme) : fn, UnistylesRegistry: { addBreakpoints: () => ({ addThemes: () => ({ addConfig: () => ({}) }) }), addThemes: () => ({ addConfig: () => ({}) }), addConfig: () => ({}) } };' >> node_modules/react-native-unistyles/index.js
           printf '%s\n' '{"name":"react-native-unistyles","version":"0.0.0-stub","main":"index.js"}' > node_modules/react-native-unistyles/package.json
           
-          # Verify reanimated is gone
-          echo "=== Checking if reanimated is still present ==="
+          # Create a stub for react-native-reanimated (needed by drawer-layout)
+          echo "=== Creating reanimated stub ==="
+          mkdir -p node_modules/react-native-reanimated
+          printf '%s\n' 'const noop = () => {}; const identity = (x) => x; const useSharedValue = (v) => ({ value: v }); const useAnimatedStyle = () => ({}); const withTiming = identity; const withSpring = identity; const runOnJS = (fn) => fn; const runOnUI = (fn) => fn;' > node_modules/react-native-reanimated/index.js
+          printf '%s\n' 'module.exports = { default: { createAnimatedComponent: (c) => c }, useSharedValue, useAnimatedStyle, useDerivedValue: useSharedValue, useAnimatedReaction: noop, withTiming, withSpring, withDelay: identity, withSequence: identity, withRepeat: identity, runOnJS, runOnUI, Easing: { linear: identity, ease: identity, bezier: () => identity }, FadeIn: {}, FadeOut: {}, SlideInRight: {}, SlideOutRight: {}, Layout: {}, Animated: { View: require("react-native").View, Text: require("react-native").Text, ScrollView: require("react-native").ScrollView, Image: require("react-native").Image }, interpolate: (v) => v, Extrapolate: { CLAMP: "clamp" }, cancelAnimation: noop, measure: noop, scrollTo: noop, setGestureState: noop, makeMutable: useSharedValue, reduceMotion: { Never: 0 }, ReduceMotion: { Never: 0 }, configureReanimatedLogger: noop };' >> node_modules/react-native-reanimated/index.js
+          printf '%s\n' '{"name":"react-native-reanimated","version":"0.0.0-stub","main":"index.js"}' > node_modules/react-native-reanimated/package.json
+          
+          # Verify reanimated podspec is gone (native code removed, JS stub remains)
+          echo "=== Checking if reanimated podspec is still present ==="
           find . -name "RNReanimated.podspec" 2>/dev/null || echo "Reanimated podspec not found (good!)"
           
           echo "=== Remaining dependencies ==="
