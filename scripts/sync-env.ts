@@ -14,29 +14,81 @@ import { join } from "node:path";
 const PORT = 3000;
 
 // Regex patterns declared at top level for performance
-const PREFERRED_IPV4_REGEX = /IPv4.*?:\s*(192\.168\.\d+\.\d+)/;
-const ANY_IPV4_REGEX = /IPv4.*?:\s*(\d+\.\d+\.\d+\.\d+)/;
+const IPV4_REGEX = /IPv4.*?:\s*(\d+\.\d+\.\d+\.\d+)/;
+const SECTION_SPLIT_REGEX = /\r?\n(?=\S.*:)/;
+const WIFI_REGEX = /Wi-Fi|Wireless/i;
+const ETHERNET_REGEX = /Ethernet/i;
+
+// Virtual adapters to skip (WSL, Hyper-V, VirtualBox, VMware, Docker, etc.)
+const VIRTUAL_ADAPTER_PATTERNS = [
+  /vEthernet/i,
+  /WSL/i,
+  /Hyper-V/i,
+  /VirtualBox/i,
+  /VMware/i,
+  /Docker/i,
+  /Loopback/i,
+];
+
+const isVirtualAdapter = (adapterName: string): boolean =>
+  VIRTUAL_ADAPTER_PATTERNS.some((pattern) => pattern.test(adapterName));
+
+const findAdapterIP = (
+  candidates: { adapter: string; ip: string }[],
+  pattern: RegExp
+): string | undefined => {
+  const match = candidates.find((c) => pattern.test(c.adapter));
+  return match?.ip;
+};
+
+type AdapterCandidate = { adapter: string; ip: string };
+
+const extractIPsFromSection = (section: string): AdapterCandidate[] => {
+  const lines = section.split("\n");
+  const adapterLine = lines[0] ?? "";
+
+  // Skip virtual or disconnected adapters
+  if (isVirtualAdapter(adapterLine) || section.includes("Media disconnected")) {
+    return [];
+  }
+
+  const results: AdapterCandidate[] = [];
+  for (const line of lines) {
+    const match = line.match(IPV4_REGEX);
+    if (match?.[1] && !match[1].startsWith("127.")) {
+      results.push({ adapter: adapterLine.trim(), ip: match[1] });
+    }
+  }
+  return results;
+};
+
+const selectBestIP = (candidates: AdapterCandidate[]): string | undefined => {
+  // Prefer Wi-Fi, then Ethernet, then any other
+  const wifiIP = findAdapterIP(candidates, WIFI_REGEX);
+  if (wifiIP) {
+    return wifiIP;
+  }
+
+  const ethernetIP = findAdapterIP(candidates, ETHERNET_REGEX);
+  if (ethernetIP) {
+    return ethernetIP;
+  }
+
+  return candidates[0]?.ip;
+};
 
 const getLocalIP = (): string => {
   try {
     // Windows: parse ipconfig output
     const output = execSync("ipconfig", { encoding: "utf-8" });
-    const lines = output.split("\n");
 
-    // Look for IPv4 addresses, prefer 192.168.x.x
-    for (const line of lines) {
-      const match = line.match(PREFERRED_IPV4_REGEX);
-      if (match?.[1]) {
-        return match[1];
-      }
-    }
+    // Split by adapter sections (each starts with a line ending in ":")
+    const sections = output.split(SECTION_SPLIT_REGEX);
+    const candidates = sections.flatMap(extractIPsFromSection);
 
-    // Fallback to any IPv4 that's not localhost
-    for (const line of lines) {
-      const match = line.match(ANY_IPV4_REGEX);
-      if (match?.[1] && !match[1].startsWith("127.")) {
-        return match[1];
-      }
+    const bestIP = selectBestIP(candidates);
+    if (bestIP) {
+      return bestIP;
     }
   } catch {
     console.error("Failed to auto-detect IP address");
