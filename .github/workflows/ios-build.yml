@@ -96,6 +96,17 @@ jobs:
           
           echo "=== Checking bundle size ==="
           ls -lh ios/build/MyApp.xcarchive/Products/Applications/*.app/main.jsbundle 2>/dev/null || echo "main.jsbundle not found in .app"
+          
+          echo "=== Checking if bundle is Hermes bytecode ==="
+          BUNDLE_PATH="ios/build/MyApp.xcarchive/Products/Applications/whex.app/main.jsbundle"
+          if [ -f "$BUNDLE_PATH" ]; then
+            # Hermes bytecode starts with specific magic bytes
+            xxd -l 8 "$BUNDLE_PATH" | head -1
+            file "$BUNDLE_PATH" || echo "file command not available"
+          fi
+          
+          echo "=== Check Info.plist for JS engine ==="
+          cat ios/build/MyApp.xcarchive/Products/Applications/*.app/Info.plist | grep -A1 -i "hermes\|jsc\|javascript" || echo "No JS engine info found"
 
       - name: Package IPA
         run: |
