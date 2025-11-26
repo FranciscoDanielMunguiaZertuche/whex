@@ -7,6 +7,14 @@
     "preview": {
       "distribution": "internal"
     },
+    "preview-device": {
+      "distribution": "internal",
+      "ios": {
+        "simulator": false,
+        "resourceClass": "m-medium"
+      },
+      "developmentClient": false
+    },
     "ci-unsigned": {
       "extends": "preview",
       "developmentClient": false,

@@ -49,7 +49,13 @@ jobs:
           bun remove expo-dev-client --cwd apps/native 2>/dev/null || true
 
       - name: Prebuild iOS
-        run: bun expo prebuild --platform ios --clean
+        run: |
+          # Clean prebuild to ensure fresh native code
+          bun expo prebuild --platform ios --clean
+          
+          # Log the generated AppDelegate to check for issues
+          echo "=== Generated AppDelegate.mm ==="
+          head -100 ios/whex/AppDelegate.mm || echo "AppDelegate.mm not found"
         env:
           EXPO_PUBLIC_SERVER_URL: ${{ steps.config.outputs.server_url }}
 
@@ -95,18 +101,32 @@ jobs:
           find ios/build -name "main.jsbundle" -o -name "*.jsbundle" 2>/dev/null || echo "No jsbundle found"
           
           echo "=== Checking bundle size ==="
-          ls -lh ios/build/MyApp.xcarchive/Products/Applications/*.app/main.jsbundle 2>/dev/null || echo "main.jsbundle not found in .app"
+          BUNDLE_PATH="ios/build/MyApp.xcarchive/Products/Applications/whex.app/main.jsbundle"
+          ls -lh "$BUNDLE_PATH" 2>/dev/null || echo "main.jsbundle not found in .app"
           
           echo "=== Checking if bundle is Hermes bytecode ==="
-          BUNDLE_PATH="ios/build/MyApp.xcarchive/Products/Applications/whex.app/main.jsbundle"
           if [ -f "$BUNDLE_PATH" ]; then
-            # Hermes bytecode starts with specific magic bytes
-            xxd -l 8 "$BUNDLE_PATH" | head -1
+            # Hermes bytecode starts with specific magic bytes (c61f bc03)
+            echo "First 16 bytes (hex):"
+            xxd -l 16 "$BUNDLE_PATH" | head -1
             file "$BUNDLE_PATH" || echo "file command not available"
+            
+            # Check bundle is not empty or corrupted
+            BUNDLE_SIZE=$(stat -f%z "$BUNDLE_PATH" 2>/dev/null || stat -c%s "$BUNDLE_PATH" 2>/dev/null)
+            echo "Bundle size: $BUNDLE_SIZE bytes"
+            if [ "$BUNDLE_SIZE" -lt 1000 ]; then
+              echo "WARNING: Bundle seems too small!"
+            fi
           fi
           
+          echo "=== Checking for Hermes framework ==="
+          ls -la ios/build/MyApp.xcarchive/Products/Applications/*.app/Frameworks/ 2>/dev/null | grep -i hermes || echo "Hermes framework not found"
+          
           echo "=== Check Info.plist for JS engine ==="
-          cat ios/build/MyApp.xcarchive/Products/Applications/*.app/Info.plist | grep -A1 -i "hermes\|jsc\|javascript" || echo "No JS engine info found"
+          plutil -p ios/build/MyApp.xcarchive/Products/Applications/*.app/Info.plist 2>/dev/null | grep -i "hermes\|jsc\|javascript\|RCT" || echo "No JS engine info found"
+          
+          echo "=== Check embedded assets ==="
+          ls -la ios/build/MyApp.xcarchive/Products/Applications/*.app/assets/ 2>/dev/null | head -20 || echo "No assets folder found"
 
       - name: Package IPA
         run: |
