@@ -3,11 +3,15 @@ import { Stack, useRouter, useSegments } from "expo-router";
 import { hideAsync, preventAutoHideAsync } from "expo-splash-screen";
 import type { ErrorInfo, ReactNode } from "react";
 import { Component, useEffect, useRef, useState } from "react";
-import { ActivityIndicator, Text, View } from "react-native";
+import { ActivityIndicator, Alert, Text, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useUnistyles } from "react-native-unistyles";
 import { authClient } from "@/lib/auth-client";
 import { queryClient } from "@/utils/trpc";
+
+// DEBUG: Show alert immediately when this module loads
+console.log("[WHEX] _layout.tsx module loading...");
+Alert.alert("Debug", "JS is running! _layout.tsx loaded");
 
 // Error boundary to catch JS errors and show them instead of white screen
 const ERROR_STACK_MAX_LENGTH = 500;
