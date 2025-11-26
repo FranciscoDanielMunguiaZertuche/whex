@@ -44,21 +44,29 @@ jobs:
       - name: Remove problematic native modules for sideload test
         run: |
           cd ../..
+          
           # Remove expo-dev-client
           bun remove expo-dev-client --cwd apps/native 2>/dev/null || true
           
           # Remove native modules that may crash on sideloaded apps
-          # Reanimated has known issues with JIT/New Arch on unsigned apps
-          bun remove react-native-reanimated --cwd apps/native 2>/dev/null || true
+          # Reanimated v4 REQUIRES New Architecture, which breaks sideloading
+          bun remove react-native-reanimated --cwd apps/native || true
           
           # Unistyles has native module that may not initialize properly
-          bun remove react-native-unistyles --cwd apps/native 2>/dev/null || true
+          bun remove react-native-unistyles --cwd apps/native || true
           
-          # Note: NOT removing react-native-screens, react-native-gesture-handler
-          # as expo-router depends on them
+          # Also delete from node_modules to ensure it's gone (bun workspace hoisting issue)
+          rm -rf node_modules/react-native-reanimated
+          rm -rf apps/native/node_modules/react-native-reanimated
+          rm -rf node_modules/react-native-unistyles
+          rm -rf apps/native/node_modules/react-native-unistyles
           
           # Reinstall to update lockfile
           bun install
+          
+          # Verify reanimated is gone
+          echo "=== Checking if reanimated is still present ==="
+          find . -name "RNReanimated.podspec" 2>/dev/null || echo "Reanimated podspec not found (good!)"
           
           echo "=== Remaining dependencies ==="
           cat apps/native/package.json | grep -A 50 '"dependencies"'
