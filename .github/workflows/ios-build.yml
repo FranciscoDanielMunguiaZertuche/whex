@@ -66,35 +66,11 @@ jobs:
           # Create a stub for react-native-unistyles so imports don't break
           echo "=== Creating unistyles stub ==="
           mkdir -p node_modules/react-native-unistyles
-          cat > node_modules/react-native-unistyles/index.js << 'EOF'
-// Stub for react-native-unistyles - provides mock implementation for sideload testing
-const mockTheme = {
-  colors: {
-    background: '#ffffff',
-    foreground: '#000000',
-    primary: '#007AFF',
-    secondary: '#5856D6',
-    muted: '#8E8E93',
-    border: '#C6C6C8',
-    card: '#F2F2F7',
-    notification: '#FF3B30',
-  },
-  spacing: { xs: 4, sm: 8, md: 16, lg: 24, xl: 32 },
-};
-
-module.exports = {
-  useUnistyles: () => ({ theme: mockTheme, styles: {} }),
-  createStyleSheet: (fn) => typeof fn === 'function' ? fn(mockTheme) : fn,
-  UnistylesRegistry: {
-    addBreakpoints: () => ({ addThemes: () => ({ addConfig: () => {} }) }),
-    addThemes: () => ({ addConfig: () => {} }),
-    addConfig: () => {},
-  },
-};
-EOF
-          cat > node_modules/react-native-unistyles/package.json << 'EOF'
-{"name":"react-native-unistyles","version":"0.0.0-stub","main":"index.js"}
-EOF
+          
+          # Write stub files using printf to avoid YAML parsing issues
+          printf '%s\n' 'const mockTheme = { colors: { background: "#ffffff", foreground: "#000000", primary: "#007AFF", secondary: "#5856D6", muted: "#8E8E93", border: "#C6C6C8", card: "#F2F2F7", notification: "#FF3B30" }, spacing: { xs: 4, sm: 8, md: 16, lg: 24, xl: 32 } };' > node_modules/react-native-unistyles/index.js
+          printf '%s\n' 'module.exports = { useUnistyles: () => ({ theme: mockTheme, styles: {} }), createStyleSheet: (fn) => typeof fn === "function" ? fn(mockTheme) : fn, UnistylesRegistry: { addBreakpoints: () => ({ addThemes: () => ({ addConfig: () => ({}) }) }), addThemes: () => ({ addConfig: () => ({}) }), addConfig: () => ({}) } };' >> node_modules/react-native-unistyles/index.js
+          printf '%s\n' '{"name":"react-native-unistyles","version":"0.0.0-stub","main":"index.js"}' > node_modules/react-native-unistyles/package.json
           
           # Verify reanimated is gone
           echo "=== Checking if reanimated is still present ==="
