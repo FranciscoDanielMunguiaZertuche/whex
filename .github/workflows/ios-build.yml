@@ -55,14 +55,14 @@ jobs:
           # Unistyles has native module that may not initialize properly
           bun remove react-native-unistyles --cwd apps/native || true
           
-          # Also delete from node_modules to ensure it's gone (bun workspace hoisting issue)
-          rm -rf node_modules/react-native-reanimated
-          rm -rf apps/native/node_modules/react-native-reanimated
-          rm -rf node_modules/react-native-unistyles
-          rm -rf apps/native/node_modules/react-native-unistyles
-          
           # Reinstall to update lockfile
           bun install
+          
+          # IMPORTANT: Delete reanimated AFTER bun install because bun hoists it to root
+          # and may reinstall it as a transitive dependency
+          echo "=== Forcibly removing reanimated from all node_modules ==="
+          find . -type d -name "react-native-reanimated" -exec rm -rf {} + 2>/dev/null || true
+          find . -type d -name "react-native-unistyles" -exec rm -rf {} + 2>/dev/null || true
           
           # Verify reanimated is gone
           echo "=== Checking if reanimated is still present ==="
