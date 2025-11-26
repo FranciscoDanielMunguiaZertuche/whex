@@ -41,12 +41,24 @@ jobs:
         run: bun install
         working-directory: .
 
-      - name: Remove expo-dev-client if present
+      - name: Remove problematic native modules for sideload test
         run: |
-          # Ensure expo-dev-client is completely removed from the workspace
           cd ../..
-          # Update bun.lockb by reinstalling without expo-dev-client
+          # Remove expo-dev-client
           bun remove expo-dev-client --cwd apps/native 2>/dev/null || true
+          
+          # Remove native modules that may crash on sideloaded apps
+          # Reanimated has known issues with JIT/New Arch
+          bun remove react-native-reanimated --cwd apps/native 2>/dev/null || true
+          
+          # Unistyles has native module that may not initialize
+          bun remove react-native-unistyles --cwd apps/native 2>/dev/null || true
+          
+          # Reinstall to update lockfile
+          bun install
+          
+          echo "=== Remaining dependencies ==="
+          cat apps/native/package.json | grep -A 50 '"dependencies"'
 
       - name: Prebuild iOS
         run: |

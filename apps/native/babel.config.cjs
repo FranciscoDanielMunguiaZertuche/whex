@@ -11,8 +11,8 @@ module.exports = (api) => {
   //   },
   // ]);
 
-  // Reanimated plugin must be last
-  plugins.push("react-native-reanimated/plugin");
+  // TEMPORARILY DISABLED - Reanimated native module may crash on sideloaded apps
+  // plugins.push("react-native-reanimated/plugin");
 
   return {
     presets: ["babel-preset-expo"],

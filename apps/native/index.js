@@ -1,11 +1,34 @@
-// Debug: Log that index.js is being executed
-// This runs BEFORE any React code
-console.log("[WHEX] index.js starting...");
+// SIDELOAD DEBUG MODE
+// This is an ultra-minimal entry point that bypasses ALL third-party native modules
+// to test if the basic React Native runtime works on sideloaded apps
 
-// Skip unistyles during initial debug - it has native dependencies
-// that might be failing silently in sideloaded context
-// import "./unistyles";
+console.log("[WHEX] index.js starting - SIDELOAD DEBUG MODE");
 
-import "expo-router/entry";
+import { AppRegistry, Text, View } from "react-native";
 
-console.log("[WHEX] expo-router/entry imported");
+// Minimal app component with zero dependencies
+const MinimalApp = () => (
+  <View
+    style={{
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: "#ff0000",
+    }}
+  >
+    <Text style={{ fontSize: 32, color: "#fff", fontWeight: "bold" }}>
+      SIDELOAD WORKS!
+    </Text>
+    <Text style={{ fontSize: 16, color: "#fff", marginTop: 20 }}>
+      React Native is running successfully.
+    </Text>
+    <Text style={{ fontSize: 14, color: "#ffcccc", marginTop: 10 }}>
+      No native modules loaded.
+    </Text>
+  </View>
+);
+
+// Register the app directly, bypassing expo-router
+AppRegistry.registerComponent("main", () => MinimalApp);
+
+console.log("[WHEX] App registered successfully");
