@@ -41,6 +41,13 @@ jobs:
         run: bun install
         working-directory: .
 
+      - name: Remove expo-dev-client if present
+        run: |
+          # Ensure expo-dev-client is completely removed from the workspace
+          cd ../..
+          # Update bun.lockb by reinstalling without expo-dev-client
+          bun remove expo-dev-client --cwd apps/native 2>/dev/null || true
+
       - name: Prebuild iOS
         run: bun expo prebuild --platform ios --clean
         env:

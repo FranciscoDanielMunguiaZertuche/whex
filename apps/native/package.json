@@ -48,7 +48,6 @@
     "ajv": "^8.17.1",
     "@babel/core": "^7.28.5",
     "@types/react": "~19.1.17",
-    "expo-dev-client": "~6.0.18",
     "typescript": "~5.9.3"
   }
 }
