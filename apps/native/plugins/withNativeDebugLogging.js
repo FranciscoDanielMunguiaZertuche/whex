@@ -15,8 +15,8 @@ const DEBUG_CODE_END = `
 
 function withNativeDebugLogging(config) {
   // Add logging to AppDelegate
-  config = withAppDelegate(config, (config) => {
-    const contents = config.modResults.contents;
+  config = withAppDelegate(config, (modConfig) => {
+    const contents = modConfig.modResults.contents;
 
     // Add logging at start of didFinishLaunchingWithOptions
     let modified = contents.replace(
@@ -30,8 +30,8 @@ function withNativeDebugLogging(config) {
       `${DEBUG_CODE_END}\n  $1`
     );
 
-    config.modResults.contents = modified;
-    return config;
+    modConfig.modResults.contents = modified;
+    return modConfig;
   });
 
   return config;
