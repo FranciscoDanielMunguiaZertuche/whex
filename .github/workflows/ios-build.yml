@@ -48,11 +48,14 @@ jobs:
           bun remove expo-dev-client --cwd apps/native 2>/dev/null || true
           
           # Remove native modules that may crash on sideloaded apps
-          # Reanimated has known issues with JIT/New Arch
+          # Reanimated has known issues with JIT/New Arch on unsigned apps
           bun remove react-native-reanimated --cwd apps/native 2>/dev/null || true
           
-          # Unistyles has native module that may not initialize
+          # Unistyles has native module that may not initialize properly
           bun remove react-native-unistyles --cwd apps/native 2>/dev/null || true
+          
+          # Note: NOT removing react-native-screens, react-native-gesture-handler
+          # as expo-router depends on them
           
           # Reinstall to update lockfile
           bun install
