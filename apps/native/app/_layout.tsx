@@ -1,21 +1,26 @@
-// SIDELOAD DEBUG: Test expo-router with Slot
-// Step 2: Testing if expo-router navigation works
+// SIDELOAD DEBUG: Test unistyles initialization
+// Step 3: Testing if react-native-unistyles causes the hang
+
+import "../unistyles"; // Initialize unistyles FIRST
 
 import { Slot } from "expo-router";
 import { Text, View } from "react-native";
+import { useUnistyles } from "react-native-unistyles";
 
 export default function RootLayout() {
+  const { theme } = useUnistyles();
+
   return (
-    <View style={{ flex: 1, backgroundColor: "#00ff00" }}>
+    <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
       <View
         style={{
           paddingTop: 60,
           paddingHorizontal: 20,
-          backgroundColor: "#007700",
+          backgroundColor: theme.colors.primary,
         }}
       >
         <Text style={{ color: "white", fontSize: 18, fontWeight: "bold" }}>
-          expo-router is working!
+          Unistyles works! Theme: {theme.colors.background}
         </Text>
       </View>
       <Slot />
