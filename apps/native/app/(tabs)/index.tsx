@@ -1,16 +1,14 @@
+import { Ionicons } from "@expo/vector-icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useMemo } from "react";
 import {
   ActivityIndicator,
   RefreshControl,
   ScrollView,
-  StyleSheet,
   Text,
   View,
 } from "react-native";
-import SwipeableTaskCard from "@/components/swipeable-task-card";
-import { useTheme } from "@/lib/theme-context";
-import type { Theme } from "@/theme";
+import { SwipeableTaskCard } from "@/components/swipeable-task-card";
 import { trpc } from "@/utils/trpc";
 
 const MAX_PRIORITIES = 3;
@@ -19,8 +17,6 @@ const MORNING_HOUR = 12;
 const AFTERNOON_HOUR = 17;
 
 export default function Today() {
-  const { theme } = useTheme();
-  const styles = createStyles(theme);
   const queryClient = useQueryClient();
 
   // Fetch tasks
@@ -63,10 +59,6 @@ export default function Today() {
     [deleteMutation]
   );
 
-  const handleTaskPress = useCallback((_id: string) => {
-    // TODO: Navigate to task detail screen
-  }, []);
-
   // Separate priorities from other tasks
   const { priorities, otherTasks, completedTasks } = useMemo(() => {
     if (!tasks) {
@@ -101,37 +93,40 @@ export default function Today() {
 
   if (isLoading) {
     return (
-      <View style={[styles.container, styles.centered]}>
-        <ActivityIndicator color={theme.colors.info} size="large" />
+      <View className="flex-1 items-center justify-center bg-background">
+        <ActivityIndicator color="#3B82F6" size="large" />
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.greeting}>{greeting}</Text>
-        <Text style={styles.title}>Today</Text>
+    <View className="flex-1 bg-background">
+      {/* Header */}
+      <View className="px-5 pt-16 pb-4">
+        <Text className="mb-1 text-muted-foreground text-sm">{greeting}</Text>
+        <Text className="font-bold text-3xl text-foreground">Today</Text>
       </View>
 
       <ScrollView
-        contentContainerStyle={styles.contentContainer}
+        className="flex-1"
+        contentContainerClassName="px-5 pb-10"
         refreshControl={
           <RefreshControl
             onRefresh={refetch}
             refreshing={isRefetching}
-            tintColor={theme.colors.info}
+            tintColor="#3B82F6"
           />
         }
         showsVerticalScrollIndicator={false}
-        style={styles.content}
       >
         {/* Daily Briefing Card */}
-        <View style={styles.briefingCard}>
-          <Text style={styles.briefingEmoji}>🌅</Text>
-          <View style={styles.briefingContent}>
-            <Text style={styles.briefingTitle}>Daily Briefing</Text>
-            <Text style={styles.briefingText}>
+        <View className="mb-6 flex-row rounded-xl border border-border bg-card p-4">
+          <Text className="mr-4 text-2xl">🌅</Text>
+          <View className="flex-1">
+            <Text className="mb-1 font-semibold text-base text-foreground">
+              Daily Briefing
+            </Text>
+            <Text className="text-muted-foreground text-sm leading-5">
               {priorities.length > 0
                 ? `You have ${priorities.length} priority ${priorities.length === 1 ? "task" : "tasks"} today.`
                 : "No priorities set. Tap + to add tasks."}
@@ -143,22 +138,22 @@ export default function Today() {
 
         {/* Priorities Section */}
         {priorities.length > 0 && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>
-              PRIORITIES ({priorities.length})
-            </Text>
+          <View className="mb-6">
+            <View className="mb-2 flex-row items-center gap-2">
+              <Ionicons color="#F59E0B" name="star" size={14} />
+              <Text className="font-semibold text-muted-foreground text-xs tracking-wide">
+                PRIORITIES ({priorities.length})
+              </Text>
+            </View>
             {priorities.map((task) => (
               <SwipeableTaskCard
-                dueDate={task.dueDate}
                 id={task.id}
                 isCompleted={task.status === "completed"}
                 isPriority={task.isPriority}
                 key={task.id}
                 notes={task.notes}
                 onDelete={handleDelete}
-                onPress={handleTaskPress}
                 onToggleComplete={handleToggleComplete}
-                projectColor={task.project?.color}
                 projectName={task.project?.name}
                 title={task.title}
               />
@@ -168,22 +163,19 @@ export default function Today() {
 
         {/* Other Tasks Section */}
         {otherTasks.length > 0 && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>
+          <View className="mb-6">
+            <Text className="mb-2 font-semibold text-muted-foreground text-xs tracking-wide">
               OTHER TASKS ({otherTasks.length})
             </Text>
             {otherTasks.map((task) => (
               <SwipeableTaskCard
-                dueDate={task.dueDate}
                 id={task.id}
                 isCompleted={task.status === "completed"}
                 isPriority={task.isPriority}
                 key={task.id}
                 notes={task.notes}
                 onDelete={handleDelete}
-                onPress={handleTaskPress}
                 onToggleComplete={handleToggleComplete}
-                projectColor={task.project?.color}
                 projectName={task.project?.name}
                 title={task.title}
               />
@@ -193,22 +185,22 @@ export default function Today() {
 
         {/* Completed Tasks Section */}
         {completedTasks.length > 0 && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>
-              COMPLETED ({completedTasks.length})
-            </Text>
+          <View className="mb-6">
+            <View className="mb-2 flex-row items-center gap-2">
+              <Ionicons color="#22C55E" name="checkmark-circle" size={14} />
+              <Text className="font-semibold text-muted-foreground text-xs tracking-wide">
+                COMPLETED ({completedTasks.length})
+              </Text>
+            </View>
             {completedTasks.slice(0, MAX_COMPLETED_SHOWN).map((task) => (
               <SwipeableTaskCard
-                dueDate={task.dueDate}
                 id={task.id}
                 isCompleted={task.status === "completed"}
                 isPriority={task.isPriority}
                 key={task.id}
                 notes={task.notes}
                 onDelete={handleDelete}
-                onPress={handleTaskPress}
                 onToggleComplete={handleToggleComplete}
-                projectColor={task.project?.color}
                 projectName={task.project?.name}
                 title={task.title}
               />
@@ -218,10 +210,12 @@ export default function Today() {
 
         {/* Empty State */}
         {tasks?.length === 0 && (
-          <View style={styles.emptyState}>
-            <Text style={styles.emptyEmoji}>✨</Text>
-            <Text style={styles.emptyTitle}>All clear!</Text>
-            <Text style={styles.emptyText}>
+          <View className="items-center py-16">
+            <Text className="mb-4 text-5xl">✨</Text>
+            <Text className="mb-2 font-semibold text-foreground text-xl">
+              All clear!
+            </Text>
+            <Text className="text-center text-base text-muted-foreground">
               Tap the + button to add your first task.
             </Text>
           </View>
@@ -230,93 +224,3 @@ export default function Today() {
     </View>
   );
 }
-
-const createStyles = (theme: Theme) =>
-  StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: theme.colors.background,
-    },
-    centered: {
-      justifyContent: "center",
-      alignItems: "center",
-    },
-    header: {
-      paddingHorizontal: 20,
-      paddingTop: 60,
-      paddingBottom: 16,
-    },
-    greeting: {
-      fontSize: theme.fontSize.sm,
-      color: theme.colors.mutedForeground,
-      marginBottom: 4,
-    },
-    title: {
-      fontSize: 28,
-      fontWeight: "bold",
-      color: theme.colors.foreground,
-    },
-    content: {
-      flex: 1,
-    },
-    contentContainer: {
-      padding: 20,
-      paddingTop: 0,
-    },
-    briefingCard: {
-      flexDirection: "row",
-      backgroundColor: theme.colors.card,
-      borderRadius: theme.borderRadius.lg,
-      padding: theme.spacing.md,
-      marginBottom: theme.spacing.lg,
-      borderWidth: 1,
-      borderColor: theme.colors.border,
-    },
-    briefingEmoji: {
-      fontSize: 24,
-      marginRight: theme.spacing.md,
-    },
-    briefingContent: {
-      flex: 1,
-    },
-    briefingTitle: {
-      fontSize: theme.fontSize.base,
-      fontWeight: "600",
-      color: theme.colors.foreground,
-      marginBottom: 4,
-    },
-    briefingText: {
-      fontSize: theme.fontSize.sm,
-      color: theme.colors.mutedForeground,
-      lineHeight: 20,
-    },
-    section: {
-      marginBottom: theme.spacing.lg,
-    },
-    sectionTitle: {
-      fontSize: theme.fontSize.xs,
-      fontWeight: "600",
-      color: theme.colors.mutedForeground,
-      letterSpacing: 0.5,
-      marginBottom: theme.spacing.sm,
-    },
-    emptyState: {
-      alignItems: "center",
-      paddingVertical: theme.spacing.xxl,
-    },
-    emptyEmoji: {
-      fontSize: 48,
-      marginBottom: theme.spacing.md,
-    },
-    emptyTitle: {
-      fontSize: theme.fontSize.xl,
-      fontWeight: "600",
-      color: theme.colors.foreground,
-      marginBottom: theme.spacing.sm,
-    },
-    emptyText: {
-      fontSize: theme.fontSize.base,
-      color: theme.colors.mutedForeground,
-      textAlign: "center",
-    },
-  });

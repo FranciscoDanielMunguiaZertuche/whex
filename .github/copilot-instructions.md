@@ -47,7 +47,7 @@ This is a **mobile-first iOS productivity application** (React Native/Expo) with
 - **Language:** TypeScript 5.3+ (strict mode enabled)
 - **UI Framework:** React Native 0.81.4 with React 19.1
 - **Navigation:** Expo Router with bottom tabs
-- **Styling:** React Native StyleSheet with custom ThemeProvider (no external styling library)
+- **Styling:** NativeWind 4.2 (Tailwind CSS for React Native) with CSS variables for theming
 - **State Management:** 
   - TanStack Query 5.85 for server state
   - tRPC React Query integration
@@ -102,11 +102,15 @@ This is a **mobile-first iOS productivity application** (React Native/Expo) with
 │   │   │   ├── sign-up.tsx
 │   │   │   └── tabbar-icon.tsx
 │   │   ├── lib/                    # Client libraries
-│   │   │   └── auth-client.ts      # Better Auth client config
+│   │   │   ├── auth-client.ts      # Better Auth client config
+│   │   │   └── theme-context.tsx   # Theme context for dark mode toggle
 │   │   ├── utils/                  # Utilities
 │   │   │   └── trpc.ts             # tRPC React Query client setup
 │   │   ├── assets/images/          # Static assets
-│   │   ├── theme.ts                # Theme tokens and ThemeProvider
+│   │   ├── global.css              # Tailwind CSS with theme variables
+│   │   ├── tailwind.config.js      # NativeWind/Tailwind configuration
+│   │   ├── nativewind-env.d.ts     # NativeWind TypeScript types
+│   │   ├── theme.ts                # Theme tokens (legacy, for non-NativeWind usage)
 │   │   ├── index.js                # Expo entry point
 │   │   └── package.json
 │   │
@@ -264,12 +268,21 @@ This is a **mobile-first iOS productivity application** (React Native/Expo) with
 - Always add `.notNull()` or default values to columns
 - Use `timestamp()` for dates, not `date()`
 
-### Styling (React Native StyleSheet)
-- Define all theme tokens in `apps/native/theme.ts`
-- Use `useTheme()` hook to access theme colors, spacing, and typography
-- Use `StyleSheet.create()` for all component styles
-- Use `useWindowDimensions()` for responsive layouts
-- No inline styles - use `StyleSheet.create()` with theme values
+### Styling (NativeWind / Tailwind CSS)
+- Use **NativeWind** with `className` prop for all styling
+- Define theme colors as CSS variables in `apps/native/global.css`
+- Configure Tailwind theme extensions in `apps/native/tailwind.config.js`
+- Use semantic color classes: `bg-background`, `text-foreground`, `bg-card`, `border-border`, etc.
+- Toggle dark mode by adding/removing `dark` class on root `GestureHandlerRootView`
+- Use `useTheme()` hook only for React Navigation components that don't support `className`
+- Biome auto-sorts Tailwind classes - run `bun check` to fix ordering
+- Avoid nested ternaries in className - extract to helper functions if needed
+
+#### Theme Color Classes Available:
+- **Backgrounds:** `bg-background`, `bg-card`, `bg-primary`, `bg-secondary`, `bg-destructive`, `bg-success`, `bg-warning`, `bg-info`
+- **Text:** `text-foreground`, `text-muted-foreground`, `text-primary-foreground`, `text-card-foreground`
+- **Borders:** `border-border`
+- **States:** `bg-success`, `bg-warning`, `bg-destructive` (with matching foreground colors)
 
 ---
 

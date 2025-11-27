@@ -20,7 +20,9 @@
       "!**/.alchemy",
       "!**/.svelte-kit",
       "!**/wrangler.jsonc",
-      "!**/.source"
+      "!**/.source",
+      "!**/global.css",
+      "!**/nativewind-env.d.ts"
     ]
   },
   "extends": ["ultracite/core", "ultracite/react"]

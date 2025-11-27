@@ -1,42 +1,17 @@
-import { ScrollView, StyleSheet, Text, View } from "react-native";
-import { useTheme } from "@/lib/theme-context";
+import { ScrollView, Text, View } from "react-native";
 
 export default function Chat() {
-  const { theme } = useTheme();
-
   return (
-    <View
-      style={[styles.container, { backgroundColor: theme.colors.background }]}
-    >
-      <View style={styles.header}>
-        <Text style={[styles.title, { color: theme.colors.foreground }]}>
-          Chat
-        </Text>
+    <View className="flex-1 bg-background">
+      <View className="px-5 pt-[60px] pb-4">
+        <Text className="font-bold text-[28px] text-foreground">Chat</Text>
       </View>
-      <ScrollView
-        contentContainerStyle={styles.contentContainer}
-        style={styles.content}
-      >
-        <View
-          style={[
-            styles.welcomeCard,
-            {
-              backgroundColor: theme.colors.card,
-              borderColor: theme.colors.border,
-            },
-          ]}
-        >
-          <Text
-            style={[styles.welcomeTitle, { color: theme.colors.foreground }]}
-          >
+      <ScrollView className="flex-1 p-5">
+        <View className="rounded-xl border border-border bg-card p-5">
+          <Text className="mb-2 font-semibold text-foreground text-lg">
             👋 Welcome to Whex
           </Text>
-          <Text
-            style={[
-              styles.welcomeText,
-              { color: theme.colors.mutedForeground },
-            ]}
-          >
+          <Text className="text-base text-muted-foreground leading-6">
             I'm your AI productivity companion. What's the first thing on your
             mind?
           </Text>
@@ -45,38 +20,3 @@ export default function Chat() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  header: {
-    paddingHorizontal: 20,
-    paddingTop: 60,
-    paddingBottom: 16,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: "bold",
-  },
-  content: {
-    flex: 1,
-  },
-  contentContainer: {
-    padding: 20,
-  },
-  welcomeCard: {
-    padding: 20,
-    borderRadius: 12,
-    borderWidth: 1,
-  },
-  welcomeTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    marginBottom: 8,
-  },
-  welcomeText: {
-    fontSize: 16,
-    lineHeight: 24,
-  },
-});

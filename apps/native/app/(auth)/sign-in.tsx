@@ -1,43 +1,16 @@
 import { Link } from "expo-router";
 import { Text, TouchableOpacity, View } from "react-native";
-import { useTheme } from "@/lib/theme-context";
 
 export default function SignInScreen() {
-  const { theme } = useTheme();
-
   return (
-    <View
-      style={{
-        flex: 1,
-        backgroundColor: theme.colors.background,
-        padding: 20,
-        paddingTop: 100,
-        alignItems: "center",
-      }}
-    >
-      <Text
-        style={{
-          color: theme.colors.foreground,
-          fontSize: 28,
-          fontWeight: "bold",
-        }}
-      >
-        Sign In
-      </Text>
-      <Text
-        style={{
-          color: theme.colors.mutedForeground,
-          fontSize: 16,
-          marginTop: 20,
-        }}
-      >
+    <View className="flex-1 items-center bg-background p-5 pt-24">
+      <Text className="font-bold text-3xl text-foreground">Sign In</Text>
+      <Text className="mt-5 text-base text-muted-foreground">
         Sign in screen works!
       </Text>
       <Link asChild href="/(auth)/sign-up">
-        <TouchableOpacity style={{ marginTop: 40 }}>
-          <Text style={{ color: theme.colors.info, fontSize: 16 }}>
-            Go to Sign Up
-          </Text>
+        <TouchableOpacity className="mt-10">
+          <Text className="text-base text-info">Go to Sign Up</Text>
         </TouchableOpacity>
       </Link>
     </View>
