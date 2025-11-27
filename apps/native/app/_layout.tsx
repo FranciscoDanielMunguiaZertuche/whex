@@ -1,30 +1,24 @@
-import { useEffect } from "react";
-import { Alert, Text, View } from "react-native";
+// SIDELOAD DEBUG: Test expo-router with Slot
+// Step 2: Testing if expo-router navigation works
 
-// ULTRA MINIMAL TEST - No expo-splash-screen at all
-// This bypasses all native module dependencies
+import { Slot } from "expo-router";
+import { Text, View } from "react-native";
 
 export default function RootLayout() {
-  useEffect(() => {
-    // This should show immediately if JS is running
-    Alert.alert("JS Running", "JavaScript is executing!");
-  }, []);
-
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "#ff0000",
-      }}
-    >
-      <Text style={{ fontSize: 32, color: "#fff", fontWeight: "bold" }}>
-        APP RUNNING
-      </Text>
-      <Text style={{ fontSize: 18, color: "#fff", marginTop: 20 }}>
-        If you see RED background, JS works!
-      </Text>
+    <View style={{ flex: 1, backgroundColor: "#00ff00" }}>
+      <View
+        style={{
+          paddingTop: 60,
+          paddingHorizontal: 20,
+          backgroundColor: "#007700",
+        }}
+      >
+        <Text style={{ color: "white", fontSize: 18, fontWeight: "bold" }}>
+          expo-router is working!
+        </Text>
+      </View>
+      <Slot />
     </View>
   );
 }

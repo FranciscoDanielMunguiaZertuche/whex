@@ -1,21 +1,19 @@
+// SIDELOAD DEBUG: Test without unistyles
 import { Stack } from "expo-router";
-import { useUnistyles } from "react-native-unistyles";
 
 export default function AuthLayout() {
-  const { theme } = useUnistyles();
-
   return (
     <Stack
       screenOptions={{
         headerStyle: {
-          backgroundColor: theme.colors.background,
+          backgroundColor: "#1a1a1a",
         },
         headerTitleStyle: {
-          color: theme.colors.foreground,
+          color: "#ffffff",
         },
-        headerTintColor: theme.colors.foreground,
+        headerTintColor: "#ffffff",
         contentStyle: {
-          backgroundColor: theme.colors.background,
+          backgroundColor: "#1a1a1a",
         },
       }}
     >

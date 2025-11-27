@@ -1,21 +1,19 @@
+// SIDELOAD DEBUG: Test without unistyles
+import { Ionicons } from "@expo/vector-icons";
 import { Tabs, useRouter } from "expo-router";
-import { useUnistyles } from "react-native-unistyles";
-
-import { TabBarIcon } from "@/components/tabbar-icon";
 
 export default function TabLayout() {
-  const { theme } = useUnistyles();
   const router = useRouter();
 
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: theme.colors.primary,
-        tabBarInactiveTintColor: theme.colors.mutedForeground,
+        tabBarActiveTintColor: "#0066ff",
+        tabBarInactiveTintColor: "#888888",
         tabBarStyle: {
-          backgroundColor: theme.colors.background,
-          borderTopColor: theme.colors.border,
+          backgroundColor: "#1a1a1a",
+          borderTopColor: "#333333",
         },
       }}
     >
@@ -23,7 +21,9 @@ export default function TabLayout() {
         name="index"
         options={{
           title: "Today",
-          tabBarIcon: ({ color }) => <TabBarIcon color={color} name="sun" />,
+          tabBarIcon: ({ color }) => (
+            <Ionicons color={color} name="sunny" size={24} />
+          ),
         }}
       />
       <Tabs.Screen
@@ -37,11 +37,7 @@ export default function TabLayout() {
         options={{
           title: "",
           tabBarIcon: () => (
-            <TabBarIcon
-              color={theme.colors.primary}
-              name="plus-circle"
-              size={32}
-            />
+            <Ionicons color="#0066ff" name="add-circle" size={32} />
           ),
           tabBarLabel: () => null,
         }}
@@ -51,7 +47,7 @@ export default function TabLayout() {
         options={{
           title: "Calendar",
           tabBarIcon: ({ color }) => (
-            <TabBarIcon color={color} name="calendar" />
+            <Ionicons color={color} name="calendar" size={24} />
           ),
         }}
       />
@@ -59,7 +55,9 @@ export default function TabLayout() {
         name="profile"
         options={{
           title: "You",
-          tabBarIcon: ({ color }) => <TabBarIcon color={color} name="user" />,
+          tabBarIcon: ({ color }) => (
+            <Ionicons color={color} name="person" size={24} />
+          ),
         }}
       />
     </Tabs>

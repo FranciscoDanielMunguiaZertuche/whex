@@ -1,169 +1,37 @@
-import { useQuery } from "@tanstack/react-query";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
-import { createStyleSheet, useStyles } from "react-native-unistyles";
-import { Container } from "@/components/container";
-import { SignIn } from "@/components/sign-in";
-import { SignUp } from "@/components/sign-up";
-import { authClient } from "@/lib/auth-client";
-import { queryClient, trpc } from "@/utils/trpc";
+// SIDELOAD DEBUG: Test expo-router WITHOUT unistyles/tRPC
+// Step 2: Testing if Drawer index screen works
+
+import { Text, View } from "react-native";
 
 export default function Home() {
-  const { styles } = useStyles(stylesheet);
-  const healthCheck = useQuery(trpc.healthCheck.queryOptions());
-  const privateData = useQuery(trpc.privateData.queryOptions());
-  const { data: session } = authClient.useSession();
-
-  let apiStatusText = "API Disconnected";
-  if (healthCheck.isLoading) {
-    apiStatusText = "Checking...";
-  } else if (healthCheck.data) {
-    apiStatusText = "Connected to API";
-  }
-
   return (
-    <Container>
-      <ScrollView>
-        <View style={styles.pageContainer}>
-          <Text style={styles.headerTitle}>BETTER T STACK</Text>
-          {session?.user ? (
-            <View style={styles.sessionInfoCard}>
-              <View style={styles.sessionUserRow}>
-                <Text style={styles.welcomeText}>
-                  Welcome,{" "}
-                  <Text style={styles.userNameText}>{session.user.name}</Text>
-                </Text>
-              </View>
-              <Text style={styles.emailText}>{session.user.email}</Text>
-
-              <TouchableOpacity
-                onPress={() => {
-                  authClient.signOut();
-                  queryClient.invalidateQueries();
-                }}
-                style={styles.signOutButton}
-              >
-                <Text style={styles.signOutButtonText}>Sign Out</Text>
-              </TouchableOpacity>
-            </View>
-          ) : null}
-          <View style={styles.apiStatusCard}>
-            <Text style={styles.cardTitle}>API Status</Text>
-            <View style={styles.apiStatusRow}>
-              <View
-                style={[
-                  styles.statusIndicatorDot,
-                  healthCheck.data
-                    ? styles.statusIndicatorGreen
-                    : styles.statusIndicatorRed,
-                ]}
-              />
-              <Text style={styles.mutedText}>{apiStatusText}</Text>
-            </View>
-          </View>
-          <View style={styles.privateDataCard}>
-            <Text style={styles.cardTitle}>Private Data</Text>
-            {privateData && (
-              <View>
-                <Text style={styles.mutedText}>
-                  {privateData.data?.message}
-                </Text>
-              </View>
-            )}
-          </View>
-          {!session?.user && (
-            <>
-              <SignIn />
-              <SignUp />
-            </>
-          )}
-        </View>
-      </ScrollView>
-    </Container>
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: "#0066ff",
+        justifyContent: "center",
+        alignItems: "center",
+        padding: 20,
+      }}
+    >
+      <Text style={{ color: "white", fontSize: 28, fontWeight: "bold" }}>
+        EXPO-ROUTER WORKS!
+      </Text>
+      <Text
+        style={{
+          color: "white",
+          fontSize: 16,
+          marginTop: 20,
+          textAlign: "center",
+        }}
+      >
+        Drawer navigation is functional.
+      </Text>
+      <Text
+        style={{ color: "white", fontSize: 14, marginTop: 10, opacity: 0.7 }}
+      >
+        No unistyles, no tRPC - just expo-router
+      </Text>
+    </View>
   );
 }
-
-const stylesheet = createStyleSheet((theme) => ({
-  pageContainer: {
-    paddingHorizontal: 8,
-  },
-  headerTitle: {
-    color: theme?.colors?.typography,
-    fontSize: 30,
-    fontWeight: "bold",
-    marginBottom: 16,
-  },
-  sessionInfoCard: {
-    marginBottom: 24,
-    padding: 16,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: theme?.colors?.border,
-  },
-  sessionUserRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 8,
-  },
-  welcomeText: {
-    color: theme?.colors?.typography,
-    fontSize: 16,
-  },
-  userNameText: {
-    fontWeight: "500",
-    color: theme?.colors?.typography,
-  },
-  emailText: {
-    color: theme?.colors?.typography,
-    fontSize: 14,
-    marginBottom: 16,
-  },
-  signOutButton: {
-    backgroundColor: theme?.colors?.destructive,
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 6,
-    alignSelf: "flex-start",
-  },
-  signOutButtonText: {
-    fontWeight: "500",
-  },
-  apiStatusCard: {
-    marginBottom: 24,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: theme?.colors?.border,
-    padding: 16,
-  },
-  cardTitle: {
-    marginBottom: 12,
-    fontWeight: "500",
-    color: theme?.colors?.typography,
-  },
-  apiStatusRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  },
-  statusIndicatorDot: {
-    height: 12,
-    width: 12,
-    borderRadius: 9999,
-  },
-  statusIndicatorGreen: {
-    backgroundColor: theme.colors.success,
-  },
-  statusIndicatorRed: {
-    backgroundColor: theme.colors.destructive,
-  },
-  mutedText: {
-    color: theme?.colors?.typography,
-  },
-  privateDataCard: {
-    marginBottom: 24,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: theme?.colors?.border,
-    padding: 16,
-  },
-}));

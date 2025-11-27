@@ -1,38 +1,22 @@
-import { ScrollView, Text, View } from "react-native";
-import { createStyleSheet, useStyles } from "react-native-unistyles";
-import { Container } from "@/components/container";
+// SIDELOAD DEBUG: Test without unistyles
+import { Text, View } from "react-native";
 
 export default function TabTwo() {
-  const { styles } = useStyles(stylesheet);
   return (
-    <Container>
-      <ScrollView contentContainerStyle={styles.container}>
-        <View style={styles.headerSection}>
-          <Text style={styles.title}>Tab Two</Text>
-          <Text style={styles.subtitle}>
-            Discover more features and content
-          </Text>
-        </View>
-      </ScrollView>
-    </Container>
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: "#1a1a1a",
+        padding: 20,
+        paddingTop: 60,
+      }}
+    >
+      <Text style={{ color: "white", fontSize: 28, fontWeight: "bold" }}>
+        Calendar
+      </Text>
+      <Text style={{ color: "#888", fontSize: 16, marginTop: 8 }}>
+        Calendar screen works!
+      </Text>
+    </View>
   );
 }
-
-const stylesheet = createStyleSheet((theme) => ({
-  container: {
-    padding: theme.spacing.lg,
-  },
-  headerSection: {
-    paddingVertical: theme.spacing.xl,
-  },
-  title: {
-    fontSize: theme.fontSize["3xl"],
-    fontWeight: "bold",
-    color: theme.colors.foreground,
-    marginBottom: theme.spacing.sm,
-  },
-  subtitle: {
-    fontSize: theme.fontSize.lg,
-    color: theme.colors.mutedForeground,
-  },
-}));

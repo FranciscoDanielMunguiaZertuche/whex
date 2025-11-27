@@ -1,59 +1,49 @@
+// SIDELOAD DEBUG: Test expo-router/drawer WITHOUT unistyles
+// Step 2: Testing if Drawer navigation works
+
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
-import { Link } from "expo-router";
 import { Drawer } from "expo-router/drawer";
-import { useUnistyles } from "react-native-unistyles";
 
-import { HeaderButton } from "../../components/header-button";
-
-const DrawerLayout = () => {
-  const { theme } = useUnistyles();
-
-  return (
-    <Drawer
-      screenOptions={{
-        headerStyle: {
-          backgroundColor: theme.colors.background,
-        },
-        headerTitleStyle: {
-          color: theme.colors.foreground,
-        },
-        headerTintColor: theme.colors.foreground,
-        drawerStyle: {
-          backgroundColor: theme.colors.background,
-        },
-        drawerLabelStyle: {
-          color: theme.colors.foreground,
-        },
-        drawerInactiveTintColor: theme.colors.mutedForeground,
+const DrawerLayout = () => (
+  <Drawer
+    screenOptions={{
+      headerStyle: {
+        backgroundColor: "#1a1a1a",
+      },
+      headerTitleStyle: {
+        color: "#ffffff",
+      },
+      headerTintColor: "#ffffff",
+      drawerStyle: {
+        backgroundColor: "#1a1a1a",
+      },
+      drawerLabelStyle: {
+        color: "#ffffff",
+      },
+      drawerInactiveTintColor: "#888888",
+    }}
+  >
+    <Drawer.Screen
+      name="index"
+      options={{
+        headerTitle: "Home",
+        drawerLabel: "Home",
+        drawerIcon: ({ size, color }) => (
+          <Ionicons color={color} name="home-outline" size={size} />
+        ),
       }}
-    >
-      <Drawer.Screen
-        name="index"
-        options={{
-          headerTitle: "Home",
-          drawerLabel: "Home",
-          drawerIcon: ({ size, color }) => (
-            <Ionicons color={color} name="home-outline" size={size} />
-          ),
-        }}
-      />
-      <Drawer.Screen
-        name="(tabs)"
-        options={{
-          headerTitle: "Tabs",
-          drawerLabel: "Tabs",
-          drawerIcon: ({ size, color }) => (
-            <MaterialIcons color={color} name="border-bottom" size={size} />
-          ),
-          headerRight: () => (
-            <Link asChild href="/modal">
-              <HeaderButton />
-            </Link>
-          ),
-        }}
-      />
-    </Drawer>
-  );
-};
+    />
+    <Drawer.Screen
+      name="(tabs)"
+      options={{
+        headerTitle: "Tabs",
+        drawerLabel: "Tabs",
+        drawerIcon: ({ size, color }) => (
+          <MaterialIcons color={color} name="border-bottom" size={size} />
+        ),
+      }}
+    />
+  </Drawer>
+);
 
 export default DrawerLayout;
