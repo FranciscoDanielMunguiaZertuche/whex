@@ -46,7 +46,7 @@ This is a **mobile-first iOS productivity application** (React Native/Expo) with
 - **Framework:** Expo 54 with Expo Router 6 (file-based routing)
 - **Language:** TypeScript 5.3+ (strict mode enabled)
 - **UI Framework:** React Native 0.81.4 with React 19.1
-- **Navigation:** Expo Router with drawer and bottom tabs
+- **Navigation:** Expo Router with bottom tabs
 - **Styling:** React Native StyleSheet with custom ThemeProvider (no external styling library)
 - **State Management:** 
   - TanStack Query 5.85 for server state
@@ -87,14 +87,12 @@ This is a **mobile-first iOS productivity application** (React Native/Expo) with
 │   │   │   │   ├── _layout.tsx     # Auth layout
 │   │   │   │   ├── sign-in.tsx     # Sign in screen
 │   │   │   │   └── sign-up.tsx     # Sign up screen
-│   │   │   ├── (drawer)/           # Drawer navigator (main app)
-│   │   │   │   ├── _layout.tsx     # Drawer layout
-│   │   │   │   ├── index.tsx       # Default drawer screen
-│   │   │   │   └── (tabs)/         # Bottom tab navigator
-│   │   │   │       ├── _layout.tsx # Tab bar layout
-│   │   │   │       ├── index.tsx   # "Today" screen
-│   │   │   │       ├── profile.tsx # Profile/"You" screen
-│   │   │   │       └── two.tsx     # Example tab
+│   │   │   ├── (tabs)/             # Bottom tab navigator
+│   │   │   │   ├── _layout.tsx     # Tab bar layout
+│   │   │   │   ├── index.tsx       # "Today" screen
+│   │   │   │   ├── two.tsx         # "Calendar" screen
+│   │   │   │   ├── create.tsx      # Create tab (redirects to modal)
+│   │   │   │   └── profile.tsx     # Profile/"You" screen
 │   │   │   ├── modal.tsx           # Quick Add (+) modal
 │   │   │   └── +not-found.tsx      # 404 screen
 │   │   ├── components/             # Shared React Native components

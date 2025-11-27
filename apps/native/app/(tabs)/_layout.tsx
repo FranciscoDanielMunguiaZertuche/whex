@@ -38,7 +38,7 @@ export default function TabLayout() {
         options={{
           title: "",
           tabBarIcon: () => (
-            <Ionicons color="#0066ff" name="add-circle" size={32} />
+            <Ionicons color={theme.colors.info} name="add-circle" size={32} />
           ),
           tabBarLabel: () => null,
         }}
