@@ -1,19 +1,34 @@
 import { Text, View } from "react-native";
+import { useTheme } from "@/lib/theme-context";
 
 export default function ProfileScreen() {
+  const { theme } = useTheme();
+
   return (
     <View
       style={{
         flex: 1,
-        backgroundColor: "#1a1a1a",
+        backgroundColor: theme.colors.background,
         padding: 20,
         paddingTop: 60,
       }}
     >
-      <Text style={{ color: "white", fontSize: 28, fontWeight: "bold" }}>
+      <Text
+        style={{
+          color: theme.colors.foreground,
+          fontSize: 28,
+          fontWeight: "bold",
+        }}
+      >
         Profile
       </Text>
-      <Text style={{ color: "#888", fontSize: 16, marginTop: 8 }}>
+      <Text
+        style={{
+          color: theme.colors.mutedForeground,
+          fontSize: 16,
+          marginTop: 8,
+        }}
+      >
         Profile screen works!
       </Text>
     </View>
