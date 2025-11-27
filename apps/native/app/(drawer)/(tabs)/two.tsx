@@ -1,4 +1,3 @@
-// SIDELOAD DEBUG: Test without unistyles
 import { Text, View } from "react-native";
 
 export default function TabTwo() {

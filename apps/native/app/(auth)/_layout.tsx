@@ -1,4 +1,3 @@
-// SIDELOAD DEBUG: Test without unistyles
 import { Stack } from "expo-router";
 
 export default function AuthLayout() {

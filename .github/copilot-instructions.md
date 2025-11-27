@@ -47,7 +47,7 @@ This is a **mobile-first iOS productivity application** (React Native/Expo) with
 - **Language:** TypeScript 5.3+ (strict mode enabled)
 - **UI Framework:** React Native 0.81.4 with React 19.1
 - **Navigation:** Expo Router with drawer and bottom tabs
-- **Styling:** React Native Unistyles 3.0 (theme system with breakpoints)
+- **Styling:** React Native StyleSheet with custom ThemeProvider (no external styling library)
 - **State Management:** 
   - TanStack Query 5.85 for server state
   - tRPC React Query integration
@@ -108,9 +108,7 @@ This is a **mobile-first iOS productivity application** (React Native/Expo) with
 │   │   ├── utils/                  # Utilities
 │   │   │   └── trpc.ts             # tRPC React Query client setup
 │   │   ├── assets/images/          # Static assets
-│   │   ├── theme.ts                # Unistyles theme definition
-│   │   ├── unistyles.ts            # Unistyles configuration
-│   │   ├── breakpoints.ts          # Responsive breakpoints
+│   │   ├── theme.ts                # Theme tokens and ThemeProvider
 │   │   ├── index.js                # Expo entry point
 │   │   └── package.json
 │   │
@@ -268,11 +266,12 @@ This is a **mobile-first iOS productivity application** (React Native/Expo) with
 - Always add `.notNull()` or default values to columns
 - Use `timestamp()` for dates, not `date()`
 
-### Styling (React Native Unistyles)
+### Styling (React Native StyleSheet)
 - Define all theme tokens in `apps/native/theme.ts`
-- Use theme colors, spacing, and typography from `theme` object
-- Use breakpoints for responsive layouts (defined in `breakpoints.ts`)
-- No inline styles - use `StyleSheet.create()` or Unistyles
+- Use `useTheme()` hook to access theme colors, spacing, and typography
+- Use `StyleSheet.create()` for all component styles
+- Use `useWindowDimensions()` for responsive layouts
+- No inline styles - use `StyleSheet.create()` with theme values
 
 ---
 

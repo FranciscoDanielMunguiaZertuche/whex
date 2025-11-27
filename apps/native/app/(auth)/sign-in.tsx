@@ -1,4 +1,3 @@
-// SIDELOAD DEBUG: Test without unistyles
 import { Link } from "expo-router";
 import { Text, TouchableOpacity, View } from "react-native";
 

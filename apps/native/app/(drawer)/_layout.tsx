@@ -1,6 +1,3 @@
-// SIDELOAD DEBUG: Test expo-router/drawer WITHOUT unistyles
-// Step 2: Testing if Drawer navigation works
-
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { Drawer } from "expo-router/drawer";
 

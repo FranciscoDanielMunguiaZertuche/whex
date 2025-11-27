@@ -1,4 +1,3 @@
-// SIDELOAD DEBUG: Test without unistyles
 import { Ionicons } from "@expo/vector-icons";
 import { Tabs, useRouter } from "expo-router";
 

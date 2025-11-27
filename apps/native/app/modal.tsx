@@ -1,4 +1,3 @@
-// SIDELOAD DEBUG: Test without unistyles/tRPC
 import { useRouter } from "expo-router";
 import { Text, TouchableOpacity, View } from "react-native";
 

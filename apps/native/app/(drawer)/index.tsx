@@ -1,6 +1,3 @@
-// SIDELOAD DEBUG: Test expo-router WITHOUT unistyles/tRPC
-// Step 2: Testing if Drawer index screen works
-
 import { Text, View } from "react-native";
 
 export default function Home() {
@@ -15,7 +12,7 @@ export default function Home() {
       }}
     >
       <Text style={{ color: "white", fontSize: 28, fontWeight: "bold" }}>
-        EXPO-ROUTER WORKS!
+        Whex
       </Text>
       <Text
         style={{
@@ -26,11 +23,6 @@ export default function Home() {
         }}
       >
         Drawer navigation is functional.
-      </Text>
-      <Text
-        style={{ color: "white", fontSize: 14, marginTop: 10, opacity: 0.7 }}
-      >
-        No unistyles, no tRPC - just expo-router
       </Text>
     </View>
   );

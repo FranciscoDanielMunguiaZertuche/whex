@@ -10,7 +10,7 @@
   "backend": "hono",
   "runtime": "bun",
   "frontend": [
-    "native-unistyles"
+    "native-bare"
   ],
   "addons": [
     "turborepo",
