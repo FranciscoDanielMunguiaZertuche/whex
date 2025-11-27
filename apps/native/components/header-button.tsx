@@ -1,6 +1,6 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { Pressable } from "react-native";
-import { createStyleSheet, useStyles } from "react-native-unistyles";
+import { Pressable, StyleSheet } from "react-native";
+import { useTheme } from "@/lib/theme-context";
 
 const PRESSED_OPACITY = 0.7;
 const DEFAULT_OPACITY = 1;
@@ -10,12 +10,24 @@ type HeaderButtonProps = {
 };
 
 export const HeaderButton = ({ onPress }: HeaderButtonProps) => {
-  const { styles } = useStyles(stylesheet);
+  const { theme } = useTheme();
+
   return (
-    <Pressable onPress={onPress} style={styles.button}>
+    <Pressable
+      onPress={onPress}
+      style={[
+        styles.button,
+        {
+          marginRight: theme.spacing.sm,
+          padding: theme.spacing.sm,
+          borderRadius: theme.borderRadius.lg,
+          backgroundColor: `${theme.colors.secondary}80`,
+        },
+      ]}
+    >
       {({ pressed }) => (
         <FontAwesome
-          color={styles.icon.color}
+          color={theme.colors.secondaryForeground}
           name="info-circle"
           size={20}
           style={{
@@ -27,14 +39,6 @@ export const HeaderButton = ({ onPress }: HeaderButtonProps) => {
   );
 };
 
-const stylesheet = createStyleSheet((theme) => ({
-  button: {
-    padding: theme.spacing.sm,
-    marginRight: theme.spacing.sm,
-    borderRadius: theme.borderRadius.lg,
-    backgroundColor: `${theme.colors.secondary}80`, // 50% opacity
-  },
-  icon: {
-    color: theme.colors.secondaryForeground,
-  },
-}));
+const styles = StyleSheet.create({
+  button: {},
+});

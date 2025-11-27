@@ -1,16 +1,26 @@
-import type React from "react";
+import type { ReactNode } from "react";
+import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { createStyleSheet, useStyles } from "react-native-unistyles";
+import { useTheme } from "@/lib/theme-context";
 
-export const Container = ({ children }: { children: React.ReactNode }) => {
-  const { styles } = useStyles(stylesheet);
-  return <SafeAreaView style={styles.container}>{children}</SafeAreaView>;
+type ContainerProps = {
+  children: ReactNode;
 };
 
-const stylesheet = createStyleSheet((theme, rt) => ({
+export const Container = ({ children }: ContainerProps) => {
+  const { theme } = useTheme();
+
+  return (
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: theme.colors.background }]}
+    >
+      {children}
+    </SafeAreaView>
+  );
+};
+
+const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background,
-    paddingBottom: rt.insets.bottom,
   },
-}));
+});

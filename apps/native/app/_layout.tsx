@@ -1,29 +1,43 @@
-// SIDELOAD DEBUG: Test unistyles initialization
-// Step 3: Testing if react-native-unistyles causes the hang
-
-import "../unistyles"; // Initialize unistyles FIRST
-
 import { Slot } from "expo-router";
-import { Text, View } from "react-native";
-import { useUnistyles } from "react-native-unistyles";
+import { StyleSheet, Text, View } from "react-native";
+import { ThemeProvider, useTheme } from "@/lib/theme-context";
 
-export default function RootLayout() {
-  const { theme } = useUnistyles();
+const RootLayoutContent = () => {
+  const { theme } = useTheme();
 
   return (
-    <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
-      <View
-        style={{
-          paddingTop: 60,
-          paddingHorizontal: 20,
-          backgroundColor: theme.colors.primary,
-        }}
-      >
-        <Text style={{ color: "white", fontSize: 18, fontWeight: "bold" }}>
-          Unistyles works! Theme: {theme.colors.background}
+    <View
+      style={[styles.container, { backgroundColor: theme.colors.background }]}
+    >
+      <View style={[styles.header, { backgroundColor: theme.colors.primary }]}>
+        <Text style={styles.headerText}>
+          Theme works! Background: {theme.colors.background}
         </Text>
       </View>
       <Slot />
     </View>
   );
+};
+
+export default function RootLayout() {
+  return (
+    <ThemeProvider>
+      <RootLayoutContent />
+    </ThemeProvider>
+  );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  header: {
+    paddingTop: 60,
+    paddingHorizontal: 20,
+  },
+  headerText: {
+    color: "white",
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+});

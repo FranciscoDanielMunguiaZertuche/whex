@@ -5,6 +5,33 @@ const sharedColors = {
   info: "#3B82F6",
 } as const;
 
+const sharedSpacing = {
+  xs: 4,
+  sm: 8,
+  md: 16,
+  lg: 24,
+  xl: 32,
+  xxl: 48,
+} as const;
+
+const sharedBorderRadius = {
+  sm: 6,
+  md: 8,
+  lg: 12,
+  xl: 16,
+} as const;
+
+const sharedFontSize = {
+  xs: 12,
+  sm: 14,
+  base: 16,
+  lg: 18,
+  xl: 20,
+  "2xl": 24,
+  "3xl": 30,
+  "4xl": 36,
+} as const;
+
 export const lightTheme = {
   colors: {
     ...sharedColors,
@@ -25,30 +52,9 @@ export const lightTheme = {
     input: "hsl(0 0% 90%)",
     ring: "hsl(0 0% 20%)",
   },
-  spacing: {
-    xs: 4,
-    sm: 8,
-    md: 16,
-    lg: 24,
-    xl: 32,
-    xxl: 48,
-  },
-  borderRadius: {
-    sm: 6,
-    md: 8,
-    lg: 12,
-    xl: 16,
-  },
-  fontSize: {
-    xs: 12,
-    sm: 14,
-    base: 16,
-    lg: 18,
-    xl: 20,
-    "2xl": 24,
-    "3xl": 30,
-    "4xl": 36,
-  },
+  spacing: sharedSpacing,
+  borderRadius: sharedBorderRadius,
+  fontSize: sharedFontSize,
 } as const;
 
 export const darkTheme = {
@@ -71,28 +77,58 @@ export const darkTheme = {
     input: "hsl(0 0% 15%)",
     ring: "hsl(0 0% 80%)",
   },
-  spacing: {
-    xs: 4,
-    sm: 8,
-    md: 16,
-    lg: 24,
-    xl: 32,
-    xxl: 48,
-  },
-  borderRadius: {
-    sm: 6,
-    md: 8,
-    lg: 12,
-    xl: 16,
-  },
-  fontSize: {
-    xs: 12,
-    sm: 14,
-    base: 16,
-    lg: 18,
-    xl: 20,
-    "2xl": 24,
-    "3xl": 30,
-    "4xl": 36,
-  },
+  spacing: sharedSpacing,
+  borderRadius: sharedBorderRadius,
+  fontSize: sharedFontSize,
 } as const;
+
+// Export theme type for use in components
+// Using a structural type that accepts both light and dark theme
+export type Theme = {
+  colors: {
+    success: string;
+    destructive: string;
+    warning: string;
+    info: string;
+    typography: string;
+    background: string;
+    foreground: string;
+    card: string;
+    cardForeground: string;
+    primary: string;
+    primaryForeground: string;
+    secondary: string;
+    secondaryForeground: string;
+    muted: string;
+    mutedForeground: string;
+    accent: string;
+    accentForeground: string;
+    border: string;
+    input: string;
+    ring: string;
+  };
+  spacing: {
+    xs: number;
+    sm: number;
+    md: number;
+    lg: number;
+    xl: number;
+    xxl: number;
+  };
+  borderRadius: {
+    sm: number;
+    md: number;
+    lg: number;
+    xl: number;
+  };
+  fontSize: {
+    xs: number;
+    sm: number;
+    base: number;
+    lg: number;
+    xl: number;
+    "2xl": number;
+    "3xl": number;
+    "4xl": number;
+  };
+};

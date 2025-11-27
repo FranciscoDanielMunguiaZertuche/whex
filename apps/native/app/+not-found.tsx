@@ -1,25 +1,62 @@
 import { Link, Stack } from "expo-router";
-import { Text, View } from "react-native";
-import { createStyleSheet, useStyles } from "react-native-unistyles";
+import { StyleSheet, Text, View } from "react-native";
 import { Container } from "@/components/container";
+import { useTheme } from "@/lib/theme-context";
 
 const BUTTON_VERTICAL_PADDING_OFFSET = 4;
 
 export default function NotFoundScreen() {
-  const { styles } = useStyles(stylesheet);
+  const { theme } = useTheme();
+
   return (
     <>
       <Stack.Screen options={{ title: "Oops!" }} />
       <Container>
-        <View style={styles.container}>
+        <View style={[styles.container, { padding: theme.spacing.lg }]}>
           <View style={styles.content}>
-            <Text style={styles.emoji}>🤔</Text>
-            <Text style={styles.title}>Page Not Found</Text>
-            <Text style={styles.description}>
+            <Text style={[styles.emoji, { marginBottom: theme.spacing.md }]}>
+              🤔
+            </Text>
+            <Text
+              style={[
+                styles.title,
+                {
+                  color: theme.colors.foreground,
+                  marginBottom: theme.spacing.sm,
+                },
+              ]}
+            >
+              Page Not Found
+            </Text>
+            <Text
+              style={[
+                styles.description,
+                {
+                  color: theme.colors.mutedForeground,
+                  marginBottom: theme.spacing.xl,
+                },
+              ]}
+            >
               Sorry, the page you're looking for doesn't exist.
             </Text>
-            <Link href="/" style={styles.button}>
-              <Text style={styles.buttonText}>Go to Home</Text>
+            <Link
+              href="/"
+              style={[
+                styles.button,
+                {
+                  backgroundColor: `${theme.colors.primary}1A`,
+                  paddingHorizontal: theme.spacing.lg,
+                  paddingVertical:
+                    theme.spacing.sm + BUTTON_VERTICAL_PADDING_OFFSET,
+                  borderRadius: theme.borderRadius.lg,
+                },
+              ]}
+            >
+              <Text
+                style={[styles.buttonText, { color: theme.colors.primary }]}
+              >
+                Go to Home
+              </Text>
             </Link>
           </View>
         </View>
@@ -28,41 +65,29 @@ export default function NotFoundScreen() {
   );
 }
 
-const stylesheet = createStyleSheet((theme) => ({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    padding: theme.spacing.lg,
   },
   content: {
     alignItems: "center",
   },
   emoji: {
     fontSize: 64,
-    marginBottom: theme.spacing.md,
   },
   title: {
-    fontSize: theme.fontSize["2xl"],
+    fontSize: 24,
     fontWeight: "bold",
-    color: theme.colors.foreground,
-    marginBottom: theme.spacing.sm,
     textAlign: "center",
   },
   description: {
-    color: theme.colors.mutedForeground,
     textAlign: "center",
-    marginBottom: theme.spacing.xl,
     maxWidth: 280,
   },
-  button: {
-    backgroundColor: `${theme.colors.primary}1A`, // 10% opacity
-    paddingHorizontal: theme.spacing.lg,
-    paddingVertical: theme.spacing.sm + BUTTON_VERTICAL_PADDING_OFFSET,
-    borderRadius: theme.borderRadius.lg,
-  },
+  button: {},
   buttonText: {
-    color: theme.colors.primary,
     fontWeight: "500",
   },
-}));
+});
