@@ -1,5 +1,6 @@
 import "../global.css";
 
+import { PortalHost } from "@rn-primitives/portal";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Slot } from "expo-router";
 import { View } from "react-native";
@@ -8,14 +9,12 @@ import { ThemeProvider, useTheme } from "@/lib/theme-context";
 import { queryClient } from "@/utils/trpc";
 
 const RootLayoutContent = () => {
-  const { theme, isDark } = useTheme();
+  const { isDark } = useTheme();
 
   return (
-    <View
-      className={`flex-1 ${isDark ? "dark" : ""}`}
-      style={{ backgroundColor: theme.colors.background }}
-    >
+    <View className={`flex-1 bg-background ${isDark ? "dark" : ""}`}>
       <Slot />
+      <PortalHost />
     </View>
   );
 };

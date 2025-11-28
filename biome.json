@@ -22,7 +22,8 @@
       "!**/wrangler.jsonc",
       "!**/.source",
       "!**/global.css",
-      "!**/nativewind-env.d.ts"
+      "!**/nativewind-env.d.ts",
+      "!apps/native/components/ui"
     ]
   },
   "extends": ["ultracite/core", "ultracite/react"]

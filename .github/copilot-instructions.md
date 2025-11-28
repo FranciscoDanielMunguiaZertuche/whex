@@ -48,6 +48,8 @@ This is a **mobile-first iOS productivity application** (React Native/Expo) with
 - **UI Framework:** React Native 0.81.4 with React 19.1
 - **Navigation:** Expo Router with bottom tabs
 - **Styling:** NativeWind 4.2 (Tailwind CSS for React Native) with CSS variables for theming
+- **UI Components:** React Native Reusables (shadcn/ui port for React Native)
+- **Icons:** lucide-react-native
 - **State Management:** 
   - TanStack Query 5.85 for server state
   - tRPC React Query integration
@@ -96,6 +98,13 @@ This is a **mobile-first iOS productivity application** (React Native/Expo) with
 │   │   │   ├── modal.tsx           # Quick Add (+) modal
 │   │   │   └── +not-found.tsx      # 404 screen
 │   │   ├── components/             # Shared React Native components
+│   │   │   ├── ui/                 # React Native Reusables (shadcn/ui port)
+│   │   │   │   ├── button.tsx      # Button with variants
+│   │   │   │   ├── card.tsx        # Card container
+│   │   │   │   ├── dialog.tsx      # Modal dialogs
+│   │   │   │   ├── input.tsx       # Text input
+│   │   │   │   ├── text.tsx        # Typography
+│   │   │   │   └── ...             # 32 total components
 │   │   │   ├── container.tsx
 │   │   │   ├── header-button.tsx
 │   │   │   ├── sign-in.tsx
@@ -103,11 +112,12 @@ This is a **mobile-first iOS productivity application** (React Native/Expo) with
 │   │   │   └── tabbar-icon.tsx
 │   │   ├── lib/                    # Client libraries
 │   │   │   ├── auth-client.ts      # Better Auth client config
-│   │   │   └── theme-context.tsx   # Theme context for dark mode toggle
+│   │   │   ├── theme-context.tsx   # Theme context for dark mode toggle
+│   │   │   └── utils.ts            # cn() helper for className merging
 │   │   ├── utils/                  # Utilities
 │   │   │   └── trpc.ts             # tRPC React Query client setup
 │   │   ├── assets/images/          # Static assets
-│   │   ├── global.css              # Tailwind CSS with theme variables
+│   │   ├── global.css              # Tailwind CSS with HSL theme variables
 │   │   ├── tailwind.config.js      # NativeWind/Tailwind configuration
 │   │   ├── nativewind-env.d.ts     # NativeWind TypeScript types
 │   │   ├── theme.ts                # Theme tokens (legacy, for non-NativeWind usage)
@@ -278,10 +288,19 @@ This is a **mobile-first iOS productivity application** (React Native/Expo) with
 - Biome auto-sorts Tailwind classes - run `bun check` to fix ordering
 - Avoid nested ternaries in className - extract to helper functions if needed
 
+#### React Native Reusables (UI Components)
+- Use components from `@/components/ui/*` for consistent UI (shadcn/ui port)
+- Import with: `import { Button } from '@/components/ui/button'`
+- Components use `class-variance-authority` for variants
+- Use `cn()` from `@/lib/utils` to merge className values
+- All components support NativeWind className prop
+- 32 components available: accordion, alert, alert-dialog, aspect-ratio, avatar, badge, button, card, checkbox, collapsible, context-menu, dialog, dropdown-menu, hover-card, icon, input, label, menubar, popover, progress, radio-group, select, separator, skeleton, switch, tabs, text, textarea, toggle, toggle-group, tooltip
+- Components folder (`apps/native/components/ui`) is excluded from Biome linting
+
 #### Theme Color Classes Available:
-- **Backgrounds:** `bg-background`, `bg-card`, `bg-primary`, `bg-secondary`, `bg-destructive`, `bg-success`, `bg-warning`, `bg-info`
-- **Text:** `text-foreground`, `text-muted-foreground`, `text-primary-foreground`, `text-card-foreground`
-- **Borders:** `border-border`
+- **Backgrounds:** `bg-background`, `bg-card`, `bg-primary`, `bg-secondary`, `bg-destructive`, `bg-success`, `bg-warning`, `bg-info`, `bg-popover`, `bg-accent`, `bg-muted`
+- **Text:** `text-foreground`, `text-muted-foreground`, `text-primary-foreground`, `text-card-foreground`, `text-popover-foreground`, `text-accent-foreground`, `text-destructive-foreground`
+- **Borders:** `border-border`, `border-input`
 - **States:** `bg-success`, `bg-warning`, `bg-destructive` (with matching foreground colors)
 
 ---
