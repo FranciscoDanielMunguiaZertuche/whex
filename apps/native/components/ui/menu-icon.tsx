@@ -10,13 +10,17 @@ interface MenuIconProps {
 export const MenuIcon = ({ color, size = 24, className }: MenuIconProps) => {
   const lineWidth = size * 0.7;
   const lineHeight = 2.5;
-  const lineGap = 5;
+  const lineGap = 3.5;
   const borderRadius = lineHeight / 2;
 
   return (
     <View
-      className={cn("items-center justify-center", className)}
-      style={{ width: size, height: size }}
+      className={cn("justify-center", className)}
+      style={{
+        width: size,
+        height: size,
+        paddingLeft: (size - lineWidth) / 2,
+      }}
     >
       <View
         style={{
@@ -38,7 +42,7 @@ export const MenuIcon = ({ color, size = 24, className }: MenuIconProps) => {
       <View style={{ height: lineGap }} />
       <View
         style={{
-          width: lineWidth,
+          width: lineWidth * 0.6,
           height: lineHeight,
           backgroundColor: color,
           borderRadius,
