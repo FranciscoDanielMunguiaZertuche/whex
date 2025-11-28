@@ -5,7 +5,6 @@ import {
   ChevronRight,
   CreditCard,
   HelpCircle,
-  Menu,
   Settings,
   Target,
   User,
@@ -14,6 +13,7 @@ import {
 import { ScrollView, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "@/components/ui/button";
+import { MenuIcon } from "@/components/ui/menu-icon";
 import { Text } from "@/components/ui/text";
 import { useDrawer } from "@/lib/drawer-context";
 import { useTheme } from "@/lib/theme-context";
@@ -28,7 +28,7 @@ export default function ProfileScreen() {
       <View className="flex-row items-center justify-between px-5 py-4">
         <View className="flex-row items-center gap-3">
           <Button onPress={openDrawer} size="icon" variant="ghost">
-            <Menu color={theme.colors.foreground} size={24} />
+            <MenuIcon color={theme.colors.foreground} size={24} />
           </Button>
           <View className="h-10 w-10 items-center justify-center rounded-full bg-primary/10">
             <User color={theme.colors.primary} size={20} />

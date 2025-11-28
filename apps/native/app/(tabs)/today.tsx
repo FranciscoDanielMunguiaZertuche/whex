@@ -6,7 +6,6 @@ import {
   Columns,
   Flag,
   List,
-  Menu,
   Plus,
   Sparkles,
 } from "lucide-react-native";
@@ -20,6 +19,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "@/components/ui/button";
+import { MenuIcon } from "@/components/ui/menu-icon";
 import { Text } from "@/components/ui/text";
 import { useDrawer } from "@/lib/drawer-context";
 import { useTheme } from "@/lib/theme-context";
@@ -160,7 +160,7 @@ export default function Today() {
       {/* Header */}
       <View className="flex-row items-center justify-between px-4 py-2">
         <Button onPress={openDrawer} size="icon" variant="ghost">
-          <Menu color={theme.colors.foreground} size={24} />
+          <MenuIcon color={theme.colors.foreground} size={24} />
         </Button>
         <Text className="font-semibold text-lg">Tasks</Text>
         <Button size="icon" variant="ghost">

@@ -2,12 +2,12 @@ import {
   ChevronLeft,
   ChevronRight,
   Clock,
-  Menu,
   MoreHorizontal,
 } from "lucide-react-native";
 import { ScrollView, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "@/components/ui/button";
+import { MenuIcon } from "@/components/ui/menu-icon";
 import { Text } from "@/components/ui/text";
 import { useDrawer } from "@/lib/drawer-context";
 import { useTheme } from "@/lib/theme-context";
@@ -30,7 +30,7 @@ export default function CalendarScreen() {
       <View className="flex-row items-center justify-between border-border/50 border-b px-4 py-2">
         <View className="flex-row items-center gap-2">
           <Button onPress={openDrawer} size="icon" variant="ghost">
-            <Menu color={theme.colors.foreground} size={24} />
+            <MenuIcon color={theme.colors.foreground} size={24} />
           </Button>
           <Button className="h-8 w-8" size="icon" variant="ghost">
             <ChevronLeft color={theme.colors.foreground} size={20} />
