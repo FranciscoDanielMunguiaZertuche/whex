@@ -1,3 +1,4 @@
+import { useRouter } from "expo-router";
 import { Bot, LayoutGrid, Plus, Search } from "lucide-react-native";
 import { useEffect } from "react";
 import {
@@ -30,6 +31,7 @@ type ChatDrawerProps = {
 };
 
 export function ChatDrawer({ isOpen, onClose }: ChatDrawerProps) {
+  const router = useRouter();
   const { theme } = useTheme();
   const translateX = useSharedValue(-DRAWER_WIDTH);
   const opacity = useSharedValue(0);
@@ -172,7 +174,13 @@ export function ChatDrawer({ isOpen, onClose }: ChatDrawerProps) {
 
               {/* Footer / User Profile */}
               <View className="mt-4 border-border border-t pt-4">
-                <TouchableOpacity className="flex-row items-center gap-3 rounded-lg px-2 py-2 hover:bg-secondary/20">
+                <TouchableOpacity
+                  className="flex-row items-center gap-3 rounded-lg px-2 py-2 hover:bg-secondary/20"
+                  onPress={() => {
+                    router.push("/profile");
+                    onClose();
+                  }}
+                >
                   <Avatar alt="User Avatar" className="h-8 w-8">
                     <AvatarImage src="https://github.com/shadcn.png" />
                     <AvatarFallback>JM</AvatarFallback>

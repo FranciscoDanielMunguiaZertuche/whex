@@ -32,11 +32,11 @@ function TabLayoutContent() {
           }}
         />
         <Tabs.Screen
-          name="today"
+          name="tasks"
           options={{
-            title: "Today",
+            title: "Tasks",
             tabBarIcon: ({ color }) => (
-              <Ionicons color={color} name="sunny" size={24} />
+              <Ionicons color={color} name="checkbox" size={24} />
             ),
           }}
         />
@@ -57,20 +57,20 @@ function TabLayoutContent() {
           }}
         />
         <Tabs.Screen
-          name="two"
+          name="notes"
           options={{
-            title: "Calendar",
+            title: "Notes",
             tabBarIcon: ({ color }) => (
-              <Ionicons color={color} name="calendar" size={24} />
+              <Ionicons color={color} name="document-text" size={24} />
             ),
           }}
         />
         <Tabs.Screen
-          name="profile"
+          name="calendar"
           options={{
-            title: "You",
+            title: "Calendar",
             tabBarIcon: ({ color }) => (
-              <Ionicons color={color} name="person" size={24} />
+              <Ionicons color={color} name="calendar" size={24} />
             ),
           }}
         />
