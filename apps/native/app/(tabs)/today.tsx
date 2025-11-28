@@ -36,6 +36,8 @@ export default function Today() {
   const {
     data: tasks,
     isLoading,
+    isError,
+    error,
     refetch,
   } = useQuery(trpc.task.listToday.queryOptions());
 
@@ -133,6 +135,22 @@ export default function Today() {
     return (
       <View className="flex-1 items-center justify-center bg-background">
         <ActivityIndicator color={theme.colors.primary} size="large" />
+      </View>
+    );
+  }
+
+  if (isError) {
+    return (
+      <View className="flex-1 items-center justify-center bg-background px-6">
+        <Text className="mb-2 text-center font-semibold text-foreground text-lg">
+          Unable to load tasks
+        </Text>
+        <Text className="mb-4 text-center text-muted-foreground text-sm">
+          {error?.message || "Something went wrong. Please try again."}
+        </Text>
+        <Button onPress={() => refetch()} variant="outline">
+          <Text>Try Again</Text>
+        </Button>
       </View>
     );
   }

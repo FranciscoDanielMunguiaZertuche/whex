@@ -6,7 +6,14 @@ import {
   Plus,
   SquarePen,
 } from "lucide-react-native";
-import { KeyboardAvoidingView, Platform, TextInput, View } from "react-native";
+import {
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  TextInput,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
@@ -35,16 +42,18 @@ export default function Chat() {
         </View>
       </View>
 
-      {/* Main Content */}
-      <View className="flex-1 items-center justify-center">
-        <View className="mb-4 flex-row items-center rounded-full border border-border/50 bg-muted/30 px-3 py-1">
-          <Text className="text-muted-foreground text-xs">Free plan · </Text>
-          <Text className="text-foreground text-xs underline">Upgrade</Text>
+      {/* Main Content - Pressable to dismiss keyboard */}
+      <Pressable className="flex-1" onPress={Keyboard.dismiss}>
+        <View className="flex-1 items-center justify-center">
+          <View className="mb-4 flex-row items-center rounded-full border border-border/50 bg-muted/30 px-3 py-1">
+            <Text className="text-muted-foreground text-xs">Free plan · </Text>
+            <Text className="text-foreground text-xs underline">Upgrade</Text>
+          </View>
+          <Text className="font-bold text-4xl text-foreground tracking-tighter">
+            whex.ai
+          </Text>
         </View>
-        <Text className="font-bold text-4xl text-foreground tracking-tighter">
-          whex.ai
-        </Text>
-      </View>
+      </Pressable>
 
       {/* Input Area */}
       <KeyboardAvoidingView
