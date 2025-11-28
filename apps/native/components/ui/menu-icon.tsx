@@ -8,42 +8,35 @@ interface MenuIconProps {
 }
 
 export const MenuIcon = ({ color, size = 24, className }: MenuIconProps) => {
-  const lineWidth = size * 0.7;
-  const lineHeight = 2.5;
-  const lineGap = 5;
-  const borderRadius = lineHeight / 2;
+  const strokeWidth = Math.max(2, size * 0.12);
+  const topPadding = size * 0.12;
+  const sidePadding = size * 0.08;
+  const lines = [size * 0.78, size * 0.78, size * 0.6];
 
   return (
     <View
-      className={cn("items-center justify-center", className)}
-      style={{ width: size, height: size }}
+      className={cn(className)}
+      style={{
+        width: size,
+        height: size,
+        paddingTop: topPadding,
+        paddingBottom: topPadding,
+        paddingLeft: sidePadding,
+        justifyContent: "space-between",
+        alignItems: "flex-start",
+      }}
     >
-      <View
-        style={{
-          width: lineWidth,
-          height: lineHeight,
-          backgroundColor: color,
-          borderRadius,
-        }}
-      />
-      <View style={{ height: lineGap }} />
-      <View
-        style={{
-          width: lineWidth,
-          height: lineHeight,
-          backgroundColor: color,
-          borderRadius,
-        }}
-      />
-      <View style={{ height: lineGap }} />
-      <View
-        style={{
-          width: lineWidth,
-          height: lineHeight,
-          backgroundColor: color,
-          borderRadius,
-        }}
-      />
+      {lines.map((lineWidth, index) => (
+        <View
+          key={index}
+          style={{
+            width: lineWidth,
+            height: strokeWidth,
+            backgroundColor: color,
+            borderRadius: strokeWidth,
+          }}
+        />
+      ))}
     </View>
   );
 };
