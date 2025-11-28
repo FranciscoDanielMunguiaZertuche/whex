@@ -23,7 +23,7 @@ Current productivity apps are either:
 - Execution-focused but ignore the "why" behind the work
 
 ### 1.3 The Solution
-A unified mobile app with 5 core screens that acts as both a **Cognitive Co-pilot** (handles daily execution) and **Life Architect** (maintains alignment with purpose). The AI has full context of the user's purpose, goals, schedule, and communications to proactively guide decisions and eliminate low-value work.
+A unified mobile app with 5 core screens that acts as both a **Cognitive Co-pilot** (handles daily execution) and **Life Architect** (maintains alignment with purpose). The AI has full context of the user's purpose, goals, schedule, notes, and communications to proactively guide decisions and eliminate low-value work.
 
 ### 1.4 Core Differentiation
 - **Full-Context AI:** Knows your purpose, values, goals, calendar, tasks, and communications
@@ -115,21 +115,22 @@ The app uses Instagram-style bottom navigation for thumb-friendly, instant conte
 
 ```
 ┌─────────────────────────────────────────┐
+│ [☰]                        [Screen Title] │ ← Hamburger menu on every screen
 │                                         │
 │         [Current Screen Content]        │
 │                                         │
 │                                         │
 └─────────────────────────────────────────┘
-  [Chat] [Today] [+] [Calendar] [You]
+  [Chat] [Tasks] [+] [Notes] [Calendar]
 ```
 
 | Tab | Icon | Label | Primary Function |
 |-----|------|-------|------------------|
 | 1 | 💬 | Chat | AI Mentor for guidance, planning, reflection |
-| 2 | ☀️ | Today | Unified inbox + daily priorities |
+| 2 | ✓ | Tasks | Unified inbox + daily priorities |
 | 3 | ➕ | + | Quick capture modal (overlay) |
-| 4 | 📅 | Calendar | Full calendar + task time-blocking |
-| 5 | 👤 | You | Purpose, goals, projects, reviews, settings |
+| 4 | 📝 | Notes | Personal notes, memories, and knowledge capture |
+| 5 | 📅 | Calendar | Full calendar + task time-blocking |
 
 **Navigation Rules:**
 - Active tab is highlighted with accent color
@@ -137,6 +138,39 @@ The app uses Instagram-style bottom navigation for thumb-friendly, instant conte
 - The "+" button opens a modal overlay (doesn't navigate)
 - All screens support pull-to-refresh
 - Smooth transitions (<200ms) between tabs
+
+### 5.2 Hamburger Menu (Drawer Navigation)
+Accessible from every screen via the hamburger icon (☰) in the top-left corner:
+
+```
+┌─────────────────────────────────────────┐
+│ ┌─────────────────────────────────────┐ │
+│ │                                     │ │
+│ │    🔍 Search                        │ │
+│ │    ─────────────────────────       │ │
+│ │    📊 Goals & Projects              │ │
+│ │    🤖 AI Assistants                 │ │
+│ │    ⚙️ Settings                       │ │
+│ │    ❓ Help & Support                │ │
+│ │                                     │ │
+│ │                                     │ │
+│ │                                     │ │
+│ │    ─────────────────────────       │ │
+│ │    ┌─────┐                         │ │
+│ │    │ 👤  │  John Smith             │ │ ← Profile section at bottom
+│ │    │     │  john@email.com         │ │
+│ │    └─────┘  View Profile →         │ │
+│ └─────────────────────────────────────┘ │
+└─────────────────────────────────────────┘
+```
+
+**Drawer Contents:**
+- **Search:** Universal search across tasks, notes, events, and AI chat
+- **Goals & Projects:** Quick access to goal tracking and project management (also accessible on You screen)
+- **AI Assistants:** Manage automation recipes and AI behaviors
+- **Settings:** Preferences, integrations, notifications
+- **Help & Support:** FAQs, contact, tutorials
+- **Profile Section (Bottom):** User's profile picture and name displayed at the bottom of the drawer. Tapping this section navigates to the full **You** screen with purpose, values, goals, projects, reviews, and all account settings
 
 ---
 
@@ -179,15 +213,16 @@ The app uses Instagram-style bottom navigation for thumb-friendly, instant conte
    - [Connect Calendar] [Skip for Now]
 
 7. **Onboarding Complete**
-   - User lands on **Today screen** with their first task visible
+   - User lands on **Tasks screen** with their first task visible
    - Tooltip: "Tap any screen in the bottom bar to explore"
 
 ### 6.2 Optional: Guided Tour
 - After onboarding, a dismissible tooltip sequence highlights:
-  - **Today:** "Your daily command center"
+  - **Tasks:** "Your daily command center"
+  - **Notes:** "Capture thoughts, memories, and ideas"
   - **Calendar:** "Drag tasks here to time-block"
-  - **+:** "Capture thoughts anytime"
-  - **You:** "Track your purpose and goals"
+  - **+:** "Quick capture anytime"
+  - **☰ Menu:** "Access your profile, goals, and settings"
 
 ---
 
@@ -349,15 +384,15 @@ The AI adapts its tone and depth based on context:
 
 ---
 
-## SCREEN 2: Today (Unified Inbox + Dashboard)
+## SCREEN 2: Tasks (Unified Inbox + Dashboard)
 
 ### 7.5 Overview
-The Today screen is the app's home base. It answers: **"What do I need to do and know RIGHT NOW?"** It's a unified view of the user's most important tasks, AI-curated actionable emails/messages, and a smart daily briefing.
+The Tasks screen is the app's home base. It answers: **"What do I need to do and know RIGHT NOW?"** It's a unified view of the user's most important tasks, AI-curated actionable emails/messages, and a smart daily briefing.
 
 ### 7.6 Layout
 ```
 ┌─────────────────────────────────────────┐
-│ [Profile]    Today    [Filter] [•••]    │ ← Header
+│ [☰]         Tasks     [Filter] [•••]    │ ← Header (hamburger menu)
 ├─────────────────────────────────────────┤
 │ ┌─────────────────────────────────────┐ │
 │ │ 🌅 DAILY BRIEFING          [Tap ↗]  │ │ ← AI Card
@@ -540,8 +575,8 @@ A task is marked as "Priority" if:
 
 ### 7.8 Header Features
 
-**Left: Profile Icon**
-- Tap → Navigate to You screen
+**Left: Hamburger Menu (☰)**
+- Tap → Opens drawer with navigation, search, and profile access
 
 **Right: Filter Button**
 - Tap → Opens filter modal:
@@ -922,20 +957,245 @@ The Calendar screen is a full-screen, intelligent calendar combining:
 
 ---
 
-## SCREEN 5: You (Personal Dashboard)
+## SCREEN 5: Notes (Personal Knowledge Hub)
 
 ### 7.19 Overview
-The You screen is the user's personal command center for purpose, goals, projects, reviews, and settings. It combines:
-- Life purpose & values (from Whex)
-- Active goals & progress (from Whex)
-- Active projects (from Momentum)
-- Weekly/monthly reviews
-- Settings & preferences (including AI Assistants)
+The Notes screen is the user's personal knowledge hub for capturing thoughts, memories, ideas, and reference information. Unlike tasks, notes are persistent content that the user wants to remember and reference over time. The AI has full context of notes to provide personalized assistance.
+
+**Key Differentiator from Tasks:**
+- **Tasks:** Action items to complete and check off
+- **Notes:** Persistent information to remember and reference
 
 ### 7.20 Layout
 ```
 ┌─────────────────────────────────────────┐
-│ [Photo]  You                    [Edit]  │ ← Header
+│ [☰]       Notes    [Search] [+ New]    │ ← Header
+├─────────────────────────────────────────┤
+│                                         │
+│ ━━━ PINNED (2) ━━━                     │
+│ ┌─────────────────────────────────┐    │
+│ │ 📌 My Core Values                │    │ ← Pinned Note
+│ │ Family, Growth, Authenticity... │    │
+│ │ Updated 3 days ago              │    │
+│ └─────────────────────────────────┘    │
+│ ┌─────────────────────────────────┐    │
+│ │ 📌 Project Ideas for 2025        │    │
+│ │ Mobile app, SaaS product, AI... │    │
+│ │ Updated 1 week ago              │    │
+│ └─────────────────────────────────┘    │
+│                                         │
+│ ━━━ RECENT ━━━                         │
+│ ┌─────────────────────────────────┐    │
+│ │ Meeting notes - Sarah call      │    │ ← Note Card
+│ │ Discussed Q4 planning and...    │    │
+│ │ Today 2:30 PM  •  #work          │    │
+│ └─────────────────────────────────┘    │
+│ ┌─────────────────────────────────┐    │
+│ │ Book: Atomic Habits insights    │    │
+│ │ Key takeaways from reading...   │    │
+│ │ Yesterday  •  #learning          │    │
+│ └─────────────────────────────────┘    │
+│ ┌─────────────────────────────────┐    │
+│ │ Maria's birthday - Nov 15       │    │
+│ │ Gift ideas: kindle, yoga mat... │    │
+│ │ Nov 1  •  #personal              │    │
+│ └─────────────────────────────────┘    │
+│ ┌─────────────────────────────────┐    │
+│ │ Weekly reflection - Week 44     │    │
+│ │ Biggest win: launched beta...   │    │
+│ │ Oct 27  •  #reflection           │    │
+│ └─────────────────────────────────┘    │
+│                                         │
+│ ━━━ FOLDERS ━━━                        │
+│ 📁 Work (12)    📁 Personal (8)        │
+│ 📁 Learning (5)  📁 Ideas (15)          │
+│                                         │
+└─────────────────────────────────────────┘
+```
+
+### 7.21 Core Features
+
+#### 7.21.1 Note Types
+
+**Quick Notes:**
+- Simple text-based notes for fast capture
+- Created via Quick Add modal or [+ New] button
+- Supports markdown formatting
+
+**Rich Notes:**
+- Full rich text editor with:
+  - Headings (H1, H2, H3)
+  - Bold, italic, strikethrough
+  - Bullet lists, numbered lists, checklists
+  - Code blocks
+  - Links and images
+  - Tables
+
+**Voice Notes (Premium):**
+- Tap microphone to record
+- Auto-transcribed by AI
+- Searchable by spoken content
+
+**AI-Generated Notes:**
+- Meeting summaries (auto-created after calendar events)
+- Weekly reflections (from review conversations)
+- Task context notes (AI suggests relevant info)
+
+#### 7.21.2 Organization System
+
+**Folders:**
+- User-created folders for organization
+- Default folders: Work, Personal, Ideas
+- Nested folders supported (1 level deep)
+- Folder colors and icons
+
+**Tags:**
+- Hashtag-based tagging (#work, #learning, #personal)
+- Auto-suggested based on content
+- Filterable and searchable
+
+**Pinned Notes:**
+- Pin important notes to top of list
+- Maximum 5 pinned notes
+- Visual pushpin icon (📌)
+
+**Sort Options:**
+- Recently modified (default)
+- Alphabetical
+- Date created
+- Manual order (drag to reorder)
+
+#### 7.21.3 AI Integration
+
+**Smart Search:**
+- Semantic search across all notes
+- "Find my notes about product launch" works even without exact keywords
+- Highlights relevant passages
+
+**AI Context:**
+- AI Chat has access to all notes (unless marked Private)
+- Can reference notes in conversations: *"Based on your 'Core Values' note, this aligns with your 'Growth' value"*
+
+**AI Suggestions:**
+- AI suggests related notes when creating new ones
+- *"This seems related to your 'Project Ideas' note. Want to link them?"*
+
+**Auto-Summarization (Premium):**
+- Long notes get AI-generated summaries
+- Summaries appear at top of note detail view
+
+#### 7.21.4 Note Card Display
+
+**Card Content:**
+- Note title (bold, truncated to 1 line)
+- First 2 lines of content (preview)
+- Last modified date
+- Tags (if any)
+- Folder indicator (if not in root)
+
+**Interaction:**
+- **Tap:** Opens Note Detail Screen
+- **Long Press:** Quick actions menu (Pin, Move, Delete)
+- **Swipe Left:** Delete (with confirmation)
+- **Swipe Right:** Pin/Unpin
+
+#### 7.21.5 Note Detail Screen
+
+**Layout:**
+```
+┌─────────────────────────────────────────┐
+│ [<] Meeting notes - Sarah    [•••]    │
+├─────────────────────────────────────────┤
+│ #work  •  📁 Work                       │
+│ Modified: Today 2:30 PM                 │
+│                                         │
+│ ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ │
+│                                         │
+│ Discussed Q4 planning with Sarah:       │
+│                                         │
+│ • Budget approved for new hire          │
+│ • Launch date moved to Dec 15           │
+│ • Need to finalize marketing plan       │
+│                                         │
+│ Action items:                           │
+│ [ ] Schedule follow-up meeting          │
+│ [ ] Send updated timeline               │
+│ [x] Review budget spreadsheet           │
+│                                         │
+│                                         │
+└─────────────────────────────────────────┘
+┌─────────────────────────────────────────┐
+│ [B] [I] [List] [Check] [Link] [Image]   │ ← Formatting Toolbar
+└─────────────────────────────────────────┘
+```
+
+**[•••] Menu Options:**
+- Pin/Unpin
+- Move to Folder
+- Add Tags
+- Share Note (copy link or export)
+- Mark as Private (excluded from AI)
+- Delete Note
+
+#### 7.21.6 Creating Notes
+
+**Method 1: [+ New] Button**
+- Opens blank note editor
+- Title field auto-focused
+
+**Method 2: Quick Add Modal (+)**
+- Select "Note" type
+- Type content
+- AI parses and formats
+
+**Method 3: From Chat**
+- User says: *"Remember that Maria's birthday is Nov 15"*
+- AI creates note automatically
+
+**Method 4: From Tasks**
+- Convert task notes to standalone note
+- Link note to related tasks
+
+#### 7.21.7 Linking & Backlinks
+
+**Linking Notes:**
+- Type `[[` to search and link to another note
+- Links are clickable and navigable
+
+**Backlinks:**
+- Each note shows "Linked from" section
+- See all notes that reference this note
+- AI suggests relevant links
+
+### 7.22 Technical Requirements
+
+**Performance:**
+- Note list scroll: 60fps
+- Note detail load: <200ms
+- Search results: <500ms
+- Auto-save: Every 2 seconds while typing
+
+**Data:**
+- Notes synced in real-time
+- Offline editing with sync queue
+- Full-text search index
+
+**Storage:**
+- Text notes: Unlimited
+- Images: 10MB per note (Free), 50MB per note (Premium)
+- Voice notes: 5 min max (Free), 30 min max (Premium)
+
+---
+
+## SCREEN 6: You (Profile & Settings) - Accessed via Hamburger Menu
+
+### 7.23 Overview
+The You screen is the user's personal command center for purpose, goals, projects, reviews, and settings. It's accessed by tapping the user's profile picture and name at the bottom of the hamburger menu on any screen.
+
+### 7.24 Layout
+```
+┌─────────────────────────────────────────┐
+│ [<]       You                    [Edit]  │ ← Header
 ├─────────────────────────────────────────┤
 │ ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓  │
 │ ┃ 🎯 YOUR NORTH STAR               ┃  │ ← Purpose Card
@@ -984,9 +1244,9 @@ The You screen is the user's personal command center for purpose, goals, project
 └─────────────────────────────────────────┘
 ```
 
-### 7.21 Core Sections
+### 7.25 Core Sections
 
-#### 7.21.1 North Star Section (Purpose & Values)
+#### 7.25.1 North Star Section (Purpose & Values)
 
 **Display:**
 - Large, prominent card at top
@@ -1008,7 +1268,7 @@ The You screen is the user's personal command center for purpose, goals, project
 - Scores 1-10: "How aligned were your actions with your purpose?"
 - Shows breakdown: "You spent 60% of time on 'Work', which aligns with 'Impact' value"
 
-#### 7.21.2 Active Goals Section
+#### 7.25.2 Active Goals Section
 
 **Display:**
 - Cards for each active goal
@@ -1040,7 +1300,7 @@ The You screen is the user's personal command center for purpose, goals, project
 **Visual Celebration:**
 - When goal hits 100%, confetti animation + AI message in Chat
 
-#### 7.21.3 Active Projects Section
+#### 7.25.3 Active Projects Section
 
 **Display:**
 - List of user's projects (from Momentum style)
@@ -1061,7 +1321,7 @@ The You screen is the user's personal command center for purpose, goals, project
 - **Goals:** Time-bound, purpose-aligned objectives
 - **Projects:** Ongoing organizational containers (like "Work", "Home", "Side Hustle")
 
-#### 7.21.4 Insights & Reviews Section
+#### 7.25.4 Insights & Reviews Section
 
 **This Week Card:**
 - Shows:
@@ -1088,7 +1348,7 @@ The You screen is the user's personal command center for purpose, goals, project
 - Tap "Past Reviews" to see dated archive
 - Searchable by month
 
-#### 7.21.5 Quick Settings Section
+#### 7.25.5 Quick Settings Section
 
 **Display:**
 - List of tappable rows (iOS style)
@@ -1143,7 +1403,7 @@ The You screen is the user's personal command center for purpose, goals, project
 - App Version
 - [Send Feedback]
 
-### 7.22 Technical Requirements
+### 7.26 Technical Requirements
 
 **Performance:**
 - Screen load: <1 second
@@ -1166,7 +1426,7 @@ A user-facing automation page that doesn't require technical knowledge. Instead 
 - **Principle:** Curated library of useful workflows that "just work"
 
 ### 8.3 Location
-- Accessible from: You screen → Settings → "AI Assistants"
+- Accessible from: Hamburger Menu → "AI Assistants"
 - Or: Long-press "+" button → "Browse AI Assistants"
 
 ### 8.4 Layout
@@ -2457,7 +2717,7 @@ This approach saves a bottom nav slot while keeping search always accessible.
 
 7b. User taps [Maybe Later]
    ↓
-8. Land on Today screen
+8. Land on Tasks screen
    ↓
 9. (North Star prompt reappears in 24 hours)
 ```
@@ -2465,7 +2725,7 @@ This approach saves a bottom nav slot while keeping search always accessible.
 ### 21.2 Core User Flow 2: Morning Routine
 
 ```
-1. User wakes up, opens app (lands on Today screen)
+1. User wakes up, opens app (lands on Tasks screen)
    ↓
 2. Sees AI Briefing card: "Good morning. 3 priorities, 1 overdue..."
    ↓
@@ -2475,7 +2735,7 @@ This approach saves a bottom nav slot while keeping search always accessible.
    ↓
 5. User reviews priorities, taps [Looks Good]
    ↓
-6. Returns to Today list
+6. Returns to Tasks list
    ↓
 7. Completes first priority task (swipe right)
    ↓
@@ -2591,7 +2851,7 @@ This approach saves a bottom nav slot while keeping search always accessible.
 
 ## END OF DOCUMENT
 
-**Total Screens:** 5 main (Chat, Today, +, Calendar, You) + 6 detail screens (Task, Event, Goal, Project, Focus, Search)
+**Total Screens:** 5 main tabs (Chat, Tasks, +, Notes, Calendar) + 1 drawer screen (You/Profile) + 6 detail screens (Task, Event, Goal, Project, Note, Focus, Search)
 
 **Total Features:** 50+ (including AI Assistants, integrations, reviews, streaks, sync)
 
