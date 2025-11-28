@@ -1,26 +1,30 @@
-import { Ionicons } from "@expo/vector-icons";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
+import { Calendar, Flag, Hash, Mic, X } from "lucide-react-native";
 import { useCallback, useState } from "react";
 import {
   KeyboardAvoidingView,
   Platform,
-  ScrollView,
-  Switch,
-  Text,
   TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Button } from "@/components/ui/button";
+import { Text } from "@/components/ui/text";
+import { useTheme } from "@/lib/theme-context";
+import { cn } from "@/lib/utils";
 import { trpc } from "@/utils/trpc";
+
+const MIN_TITLE_LENGTH_FOR_AI = 5;
 
 export default function QuickAddModal() {
   const router = useRouter();
+  const { theme } = useTheme();
   const queryClient = useQueryClient();
 
   const [title, setTitle] = useState("");
-  const [notes, setNotes] = useState("");
-  const [isPriority, setIsPriority] = useState(false);
+  const [type, setType] = useState<"task" | "note" | "event">("task");
 
   const createTaskMutation = useMutation(
     trpc.task.create.mutationOptions({
@@ -38,116 +42,121 @@ export default function QuickAddModal() {
 
     createTaskMutation.mutate({
       title: title.trim(),
-      notes: notes.trim() || undefined,
-      isPriority,
+      isPriority: false, // Default for quick add
     });
-  }, [title, notes, isPriority, createTaskMutation]);
+  }, [title, createTaskMutation]);
 
   const handleCancel = useCallback(() => {
     router.back();
   }, [router]);
 
-  const isValid = title.trim().length > 0;
-  const isLoading = createTaskMutation.isPending;
-
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      className="flex-1"
-    >
-      <View className="flex-1 justify-end bg-black/50">
-        <View className="max-h-[85%] rounded-t-2xl bg-background">
-          {/* Header */}
-          <View className="flex-row items-center justify-between border-border border-b px-4 py-4">
-            <TouchableOpacity className="min-w-[60px]" onPress={handleCancel}>
-              <Text className="text-base text-muted-foreground">Cancel</Text>
-            </TouchableOpacity>
-            <Text className="font-semibold text-foreground text-lg">
-              Quick Add
-            </Text>
-            <TouchableOpacity
-              className="min-w-[60px]"
-              disabled={!isValid || isLoading}
-              onPress={handleSave}
-            >
-              <Text
-                className={`text-right font-semibold text-base text-info ${
-                  (!isValid || isLoading) && "opacity-50"
-                }`}
+    <SafeAreaView className="flex-1 bg-background">
+      <View className="flex-1 p-4">
+        {/* Header */}
+        <View className="mb-6 flex-row items-center justify-between">
+          <Button onPress={handleCancel} size="icon" variant="ghost">
+            <X color={theme.colors.foreground} size={24} />
+          </Button>
+          <View className="flex-row rounded-lg bg-secondary/30 p-1">
+            {(["task", "note", "event"] as const).map((t) => (
+              <TouchableOpacity
+                className={cn(
+                  "rounded-md px-3 py-1 capitalize",
+                  type === t ? "bg-background shadow-sm" : ""
+                )}
+                key={t}
+                onPress={() => setType(t)}
               >
-                {isLoading ? "Saving..." : "Done"}
+                <Text
+                  className={cn(
+                    "font-medium text-xs",
+                    type === t ? "text-foreground" : "text-muted-foreground"
+                  )}
+                >
+                  {t}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+          <Button
+            className={cn("rounded-full px-4", !title.trim() && "opacity-50")}
+            disabled={!title.trim() || createTaskMutation.isPending}
+            onPress={handleSave}
+            size="sm"
+          >
+            <Text className="font-medium text-primary-foreground">Done</Text>
+          </Button>
+        </View>
+
+        {/* Input Area */}
+        <View className="flex-1">
+          <TextInput
+            autoFocus
+            className="mb-4 font-medium text-2xl text-foreground"
+            multiline
+            onChangeText={setTitle}
+            placeholder="What's on your mind?"
+            placeholderTextColor={theme.colors.mutedForeground}
+            textAlignVertical="top"
+            value={title}
+          />
+        </View>
+
+        {/* AI Preview (Mock) */}
+        {title.length > MIN_TITLE_LENGTH_FOR_AI && (
+          <View className="mb-4 rounded-xl border border-border bg-secondary/20 p-4">
+            <View className="mb-2 flex-row items-center gap-2">
+              <Text className="font-bold text-primary text-xs uppercase tracking-wider">
+                AI Detected
               </Text>
+              <View className="h-[1px] flex-1 bg-border" />
+            </View>
+            <View className="gap-2">
+              <View className="flex-row items-center gap-2">
+                <Text className="w-16 text-muted-foreground text-sm">Task</Text>
+                <Text className="font-medium text-foreground text-sm">
+                  "{title}"
+                </Text>
+              </View>
+              <View className="flex-row items-center gap-2">
+                <Text className="w-16 text-muted-foreground text-sm">
+                  Project
+                </Text>
+                <View className="rounded bg-blue-500/10 px-2 py-0.5 text-xs">
+                  <Text className="font-medium text-blue-500 text-xs">
+                    Inbox
+                  </Text>
+                </View>
+              </View>
+            </View>
+          </View>
+        )}
+
+        {/* Toolbar */}
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          keyboardVerticalOffset={Platform.OS === "ios" ? 10 : 0}
+        >
+          <View className="flex-row items-center justify-between border-border/50 border-t pt-2">
+            <View className="flex-row gap-4">
+              <TouchableOpacity>
+                <Calendar color={theme.colors.mutedForeground} size={24} />
+              </TouchableOpacity>
+              <TouchableOpacity>
+                <Hash color={theme.colors.mutedForeground} size={24} />
+              </TouchableOpacity>
+              <TouchableOpacity>
+                <Flag color={theme.colors.mutedForeground} size={24} />
+              </TouchableOpacity>
+            </View>
+
+            <TouchableOpacity className="rounded-full bg-primary/10 p-3">
+              <Mic color={theme.colors.primary} size={24} />
             </TouchableOpacity>
           </View>
-
-          <ScrollView
-            className="flex-1 p-6"
-            keyboardShouldPersistTaps="handled"
-          >
-            {/* Title Input */}
-            <View className="mb-6">
-              <TextInput
-                autoFocus
-                className="min-h-[40px] font-medium text-foreground text-xl"
-                maxLength={200}
-                multiline
-                onChangeText={setTitle}
-                placeholder="What needs to be done?"
-                placeholderTextColor="#737373"
-                returnKeyType="next"
-                value={title}
-              />
-            </View>
-
-            {/* Notes Input */}
-            <View className="mb-6">
-              <Text className="mb-2 font-medium text-muted-foreground text-sm">
-                Notes
-              </Text>
-              <TextInput
-                className="min-h-[80px] rounded-lg border border-border bg-card p-4 text-base text-foreground"
-                maxLength={1000}
-                multiline
-                numberOfLines={3}
-                onChangeText={setNotes}
-                placeholder="Add details..."
-                placeholderTextColor="#737373"
-                style={{ textAlignVertical: "top" }}
-                value={notes}
-              />
-            </View>
-
-            {/* Priority Toggle */}
-            <View className="flex-row items-center justify-between border-border border-t py-4">
-              <View className="flex-row items-center gap-2">
-                <Ionicons
-                  color={isPriority ? "#F59E0B" : "#737373"}
-                  name="star"
-                  size={20}
-                />
-                <Text className="text-base text-foreground">Priority</Text>
-              </View>
-              <Switch
-                onValueChange={setIsPriority}
-                thumbColor="#fff"
-                trackColor={{ false: "#E6E6E6", true: "#F59E0B" }}
-                value={isPriority}
-              />
-            </View>
-
-            {/* Quick Tips */}
-            <View className="mt-6 rounded-lg border border-border bg-card p-4">
-              <Text className="mb-2 font-semibold text-foreground text-sm">
-                💡 Tips
-              </Text>
-              <Text className="text-muted-foreground text-sm leading-6">
-                • Maximum 3 priorities per day for focus{"\n"}• Add notes for
-                context and subtasks{"\n"}• AI parsing coming soon!
-              </Text>
-            </View>
-          </ScrollView>
-        </View>
+        </KeyboardAvoidingView>
       </View>
-    </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
