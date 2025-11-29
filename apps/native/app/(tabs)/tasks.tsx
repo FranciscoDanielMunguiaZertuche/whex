@@ -10,13 +10,7 @@ import {
   Sparkles,
 } from "lucide-react-native";
 import { useCallback, useMemo, useState } from "react";
-import {
-  ActivityIndicator,
-  FlatList,
-  RefreshControl,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { FlatList, RefreshControl, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "@/components/ui/button";
 import { MenuIcon } from "@/components/ui/menu-icon";
@@ -26,20 +20,79 @@ import { useTheme } from "@/lib/theme-context";
 import { cn } from "@/lib/utils";
 import { trpc } from "@/utils/trpc";
 
+// Mock data for when user is not logged in
+const MOCK_TASKS = [
+  {
+    id: "1",
+    title: "Review product roadmap for Q1",
+    status: "pending" as const,
+    isPriority: true,
+    projectName: "Product",
+  },
+  {
+    id: "2",
+    title: "Prepare investor pitch deck",
+    status: "pending" as const,
+    isPriority: true,
+    projectName: "Fundraising",
+  },
+  {
+    id: "3",
+    title: "Schedule 1:1 with design team",
+    status: "pending" as const,
+    isPriority: false,
+    projectName: "Team",
+  },
+  {
+    id: "4",
+    title: "Finalize budget proposal",
+    status: "pending" as const,
+    isPriority: true,
+    projectName: "Finance",
+  },
+  {
+    id: "5",
+    title: "Review and respond to partner emails",
+    status: "pending" as const,
+    isPriority: false,
+    projectName: "Inbox",
+  },
+  {
+    id: "6",
+    title: "Update project documentation",
+    status: "completed" as const,
+    isPriority: false,
+    projectName: "Engineering",
+  },
+  {
+    id: "7",
+    title: "Send weekly team update",
+    status: "completed" as const,
+    isPriority: false,
+    projectName: "Team",
+  },
+];
+
+type Task = (typeof MOCK_TASKS)[number];
+
 export default function Today() {
   const { theme } = useTheme();
   const { openDrawer } = useDrawer();
   const queryClient = useQueryClient();
   const [viewMode, setViewMode] = useState<"list" | "board">("list");
+  const [mockTasks, setMockTasks] = useState<Task[]>(MOCK_TASKS);
 
-  // Fetch tasks
+  // Fetch tasks - will fail if not logged in, which is fine
   const {
     data: tasks,
     isLoading,
     isError,
-    error,
     refetch,
   } = useQuery(trpc.task.listToday.queryOptions());
+
+  // Use mock data when there's an error (not logged in) or no data
+  const useMockData = isError || !tasks;
+  const displayTasks = useMockData ? mockTasks : tasks;
 
   // Toggle complete mutation
   const toggleCompleteMutation = useMutation(
@@ -52,32 +105,42 @@ export default function Today() {
 
   const handleToggleComplete = useCallback(
     (id: string, isCompleted: boolean) => {
-      toggleCompleteMutation.mutate({ id, isCompleted });
+      if (useMockData) {
+        // Toggle mock task locally
+        setMockTasks((prev) =>
+          prev.map((t) =>
+            t.id === id
+              ? {
+                  ...t,
+                  status: isCompleted ? "completed" : ("pending" as const),
+                }
+              : t
+          )
+        );
+      } else {
+        toggleCompleteMutation.mutate({ id, isCompleted });
+      }
     },
-    [toggleCompleteMutation]
+    [toggleCompleteMutation, useMockData]
   );
 
   // Separate priorities from other tasks
   const { allTasks, completedCount, totalCount } = useMemo(() => {
-    if (!tasks) {
+    if (!displayTasks) {
       return { allTasks: [], completedCount: 0, totalCount: 0 };
     }
 
-    const completed = tasks.filter((t) => t.status === "completed");
-    const incomplete = tasks.filter((t) => t.status !== "completed");
+    const completed = displayTasks.filter((t) => t.status === "completed");
+    const incomplete = displayTasks.filter((t) => t.status !== "completed");
 
     return {
       allTasks: [...incomplete, ...completed],
       completedCount: completed.length,
-      totalCount: tasks.length,
+      totalCount: displayTasks.length,
     };
-  }, [tasks]);
+  }, [displayTasks]);
 
-  const renderTaskItem = ({
-    item,
-  }: {
-    item: NonNullable<typeof tasks>[number];
-  }) => {
+  const renderTaskItem = ({ item }: { item: Task }) => {
     const isCompleted = item.status === "completed";
 
     return (
@@ -130,30 +193,6 @@ export default function Today() {
       </TouchableOpacity>
     );
   };
-
-  if (isLoading) {
-    return (
-      <View className="flex-1 items-center justify-center bg-background">
-        <ActivityIndicator color={theme.colors.primary} size="large" />
-      </View>
-    );
-  }
-
-  if (isError) {
-    return (
-      <View className="flex-1 items-center justify-center bg-background px-6">
-        <Text className="mb-2 text-center font-semibold text-foreground text-lg">
-          Unable to load tasks
-        </Text>
-        <Text className="mb-4 text-center text-muted-foreground text-sm">
-          {error?.message || "Something went wrong. Please try again."}
-        </Text>
-        <Button onPress={() => refetch()} variant="outline">
-          <Text>Try Again</Text>
-        </Button>
-      </View>
-    );
-  }
 
   return (
     <SafeAreaView className="flex-1 bg-background">
