@@ -85,18 +85,21 @@ This is a **mobile-first iOS productivity application** (React Native/Expo) with
 │   ├── native/                     # Expo React Native mobile app (primary)
 │   │   ├── app/                    # Expo Router file-based routing
 │   │   │   ├── _layout.tsx         # Root layout with providers
+│   │   │   ├── index.tsx           # App entry/redirect screen
+│   │   │   ├── modal.tsx           # Quick Add (+) modal
+│   │   │   ├── profile.tsx         # Profile/"You" screen
+│   │   │   ├── +not-found.tsx      # 404 screen
 │   │   │   ├── (auth)/             # Auth route group
 │   │   │   │   ├── _layout.tsx     # Auth layout
 │   │   │   │   ├── sign-in.tsx     # Sign in screen
 │   │   │   │   └── sign-up.tsx     # Sign up screen
-│   │   │   ├── (tabs)/             # Bottom tab navigator
-│   │   │   │   ├── _layout.tsx     # Tab bar layout
-│   │   │   │   ├── index.tsx       # "Today" screen
-│   │   │   │   ├── two.tsx         # "Calendar" screen
-│   │   │   │   ├── create.tsx      # Create tab (redirects to modal)
-│   │   │   │   └── profile.tsx     # Profile/"You" screen
-│   │   │   ├── modal.tsx           # Quick Add (+) modal
-│   │   │   └── +not-found.tsx      # 404 screen
+│   │   │   └── (tabs)/             # Bottom tab navigator
+│   │   │       ├── _layout.tsx     # Tab bar layout
+│   │   │       ├── calendar.tsx    # Calendar screen
+│   │   │       ├── chat.tsx        # AI Chat screen
+│   │   │       ├── create.tsx      # Create tab (redirects to modal)
+│   │   │       ├── notes.tsx       # Notes screen
+│   │   │       └── tasks.tsx       # Tasks screen
 │   │   ├── components/             # Shared React Native components
 │   │   │   ├── ui/                 # React Native Reusables (shadcn/ui port)
 │   │   │   │   ├── button.tsx      # Button with variants
@@ -104,14 +107,18 @@ This is a **mobile-first iOS productivity application** (React Native/Expo) with
 │   │   │   │   ├── dialog.tsx      # Modal dialogs
 │   │   │   │   ├── input.tsx       # Text input
 │   │   │   │   ├── text.tsx        # Typography
-│   │   │   │   └── ...             # 32 total components
+│   │   │   │   └── ...             # 33 total components
+│   │   │   ├── chat-drawer.tsx     # Chat history drawer
 │   │   │   ├── container.tsx
 │   │   │   ├── header-button.tsx
 │   │   │   ├── sign-in.tsx
 │   │   │   ├── sign-up.tsx
-│   │   │   └── tabbar-icon.tsx
+│   │   │   ├── swipeable-task-card.tsx  # Swipeable task component
+│   │   │   ├── tabbar-icon.tsx
+│   │   │   └── task-card.tsx       # Task card component
 │   │   ├── lib/                    # Client libraries
 │   │   │   ├── auth-client.ts      # Better Auth client config
+│   │   │   ├── drawer-context.tsx  # Drawer state context
 │   │   │   ├── theme-context.tsx   # Theme context for dark mode toggle
 │   │   │   └── utils.ts            # cn() helper for className merging
 │   │   ├── utils/                  # Utilities
@@ -165,14 +172,16 @@ This is a **mobile-first iOS productivity application** (React Native/Expo) with
 ├── .vscode/
 │   └── settings.json               # VS Code workspace settings
 │
-├── docs/                           # Project documentation
-│   └── prd.md                      # Product Requirements Document (2.0)
-│
+├── android/                        # Android native project
+├── scripts/                        # Build/utility scripts
 ├── biome.json                      # Biome linter/formatter config
+├── prd.md                          # Product Requirements Document (2.0)
+├── prd.md                          # Product Requirements Document (2.0)
 ├── turbo.json                      # Turborepo task pipeline config
 ├── tsconfig.json                   # Root TypeScript config
 ├── tsconfig.base.json              # Shared TypeScript config
 ├── bunfig.toml                     # Bun runtime configuration
+├── server-config.json              # Server configuration
 └── package.json                    # Root workspace package.json
 ```
 
