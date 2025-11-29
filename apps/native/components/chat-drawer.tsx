@@ -183,7 +183,11 @@ export function ChatDrawer({ isOpen, onClose }: ChatDrawerProps) {
                 >
                   <Avatar alt="User Avatar" className="h-8 w-8">
                     <AvatarImage src="https://github.com/shadcn.png" />
-                    <AvatarFallback>JM</AvatarFallback>
+                    <AvatarFallback>
+                      <Text className="font-medium text-foreground text-xs">
+                        JM
+                      </Text>
+                    </AvatarFallback>
                   </Avatar>
                   <View className="flex-1">
                     <Text className="font-medium text-foreground text-sm">
