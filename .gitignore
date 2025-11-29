@@ -52,3 +52,8 @@ temp
 # Expo
 .expo/
 expo-env.d.ts
+
+# Expo prebuild generated native projects (regenerate with `npx expo prebuild`)
+android/
+ios/
+app.json
