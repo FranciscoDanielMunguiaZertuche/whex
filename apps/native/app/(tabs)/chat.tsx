@@ -1,12 +1,15 @@
 import {
   ArrowUp,
+  Bot,
   ChevronDown,
   Mic,
   Plus,
   SquarePen,
+  User,
 } from "lucide-react-native";
+import { useEffect, useRef, useState } from "react";
 import {
-  Keyboard,
+  FlatList,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -19,54 +22,186 @@ import { MenuIcon } from "@/components/ui/menu-icon";
 import { Text } from "@/components/ui/text";
 import { useDrawer } from "@/lib/drawer-context";
 import { useTheme } from "@/lib/theme-context";
+import { cn } from "@/lib/utils";
+
+type Message = {
+  id: string;
+  text: string;
+  sender: "user" | "ai";
+  timestamp: Date;
+  actions?: string[];
+};
+
+const INITIAL_MESSAGES: Message[] = [
+  {
+    id: "1",
+    text: "Good morning! You have 3 priority tasks today. Want to review them?",
+    sender: "ai",
+    timestamp: new Date(),
+    actions: ["Yes, show me", "Not now"],
+  },
+];
+
+const AI_RESPONSE_DELAY = 1000;
+const SCROLL_DELAY = 100;
+const KEYBOARD_OFFSET_IOS = 90;
 
 export default function Chat() {
   const { theme } = useTheme();
   const { openDrawer } = useDrawer();
+  const [messages, setMessages] = useState<Message[]>(INITIAL_MESSAGES);
+  const [inputText, setInputText] = useState("");
+  const flatListRef = useRef<FlatList>(null);
+
+  const handleSend = () => {
+    if (!inputText.trim()) {
+      return;
+    }
+
+    const userMessage: Message = {
+      id: Date.now().toString(),
+      text: inputText,
+      sender: "user",
+      timestamp: new Date(),
+    };
+
+    setMessages((prev) => [...prev, userMessage]);
+    setInputText("");
+
+    // Simulate AI response
+    setTimeout(() => {
+      const aiMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        text: "I've added that to your tasks. Is there anything else you need help with?",
+        sender: "ai",
+        timestamp: new Date(),
+        actions: ["View Tasks", "Add another"],
+      };
+      setMessages((prev) => [...prev, aiMessage]);
+    }, AI_RESPONSE_DELAY);
+  };
+
+  useEffect(() => {
+    if (messages.length) {
+      setTimeout(() => {
+        flatListRef.current?.scrollToEnd({ animated: true });
+      }, SCROLL_DELAY);
+    }
+  }, [messages]);
+
+  const renderMessage = ({ item }: { item: Message }) => {
+    const isUser = item.sender === "user";
+    return (
+      <View
+        className={cn(
+          "mb-4 flex-row",
+          isUser ? "justify-end" : "justify-start"
+        )}
+      >
+        {!isUser && (
+          <View className="mr-2 h-8 w-8 items-center justify-center rounded-full bg-primary/10">
+            <Bot color={theme.colors.primary} size={16} />
+          </View>
+        )}
+        <View
+          className={cn(
+            "max-w-[80%] rounded-2xl px-4 py-3",
+            isUser ? "rounded-tr-sm bg-primary" : "rounded-tl-sm bg-muted/50"
+          )}
+        >
+          <Text
+            className={cn(
+              "text-base",
+              isUser ? "text-primary-foreground" : "text-foreground"
+            )}
+          >
+            {item.text}
+          </Text>
+          {item.actions && !isUser && (
+            <View className="mt-3 flex-row flex-wrap gap-2">
+              {item.actions.map((action) => (
+                <Pressable
+                  className="rounded-full border border-border bg-background px-3 py-1.5 active:bg-muted"
+                  key={action}
+                  onPress={() => {
+                    const userMsg: Message = {
+                      id: Date.now().toString(),
+                      text: action,
+                      sender: "user",
+                      timestamp: new Date(),
+                    };
+                    setMessages((prev) => [...prev, userMsg]);
+                    // Simulate response
+                    setTimeout(() => {
+                      const aiMsg: Message = {
+                        id: (Date.now() + 1).toString(),
+                        text: `Okay, let's ${action.toLowerCase()}.`,
+                        sender: "ai",
+                        timestamp: new Date(),
+                      };
+                      setMessages((prev) => [...prev, aiMsg]);
+                    }, AI_RESPONSE_DELAY);
+                  }}
+                >
+                  <Text className="font-medium text-primary text-sm">
+                    {action}
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
+          )}
+        </View>
+        {isUser && (
+          <View className="ml-2 h-8 w-8 items-center justify-center rounded-full bg-muted">
+            <User color={theme.colors.mutedForeground} size={16} />
+          </View>
+        )}
+      </View>
+    );
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-background">
       {/* Header */}
-      <View className="flex-row items-center justify-between px-4 py-2">
+      <View className="flex-row items-center justify-between border-border/50 border-b px-4 py-2">
         <Button onPress={openDrawer} size="icon" variant="ghost">
           <MenuIcon color={theme.colors.foreground} size={24} />
         </Button>
         <Text className="font-semibold text-lg">Chat</Text>
         <View className="flex-row gap-2">
-          <Button size="icon" variant="ghost">
+          <Button onPress={() => setMessages([])} size="icon" variant="ghost">
             <SquarePen color={theme.colors.foreground} size={24} />
-          </Button>
-          <Button size="icon" variant="ghost">
-            <Plus color={theme.colors.foreground} size={24} />
           </Button>
         </View>
       </View>
 
-      {/* Main Content - Pressable to dismiss keyboard */}
-      <Pressable className="flex-1" onPress={Keyboard.dismiss}>
-        <View className="flex-1 items-center justify-center">
-          <View className="mb-4 flex-row items-center rounded-full border border-border/50 bg-muted/30 px-3 py-1">
-            <Text className="text-muted-foreground text-xs">Free plan · </Text>
-            <Text className="text-foreground text-xs underline">Upgrade</Text>
-          </View>
-          <Text className="font-bold text-4xl text-foreground tracking-tighter">
-            whex.ai
-          </Text>
-        </View>
-      </Pressable>
+      {/* Messages List */}
+      <FlatList
+        className="flex-1"
+        contentContainerStyle={{ padding: 16, paddingBottom: 20 }}
+        data={messages}
+        keyExtractor={(item) => item.id}
+        ref={flatListRef}
+        renderItem={renderMessage}
+        showsVerticalScrollIndicator={false}
+      />
 
       {/* Input Area */}
       <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        keyboardVerticalOffset={Platform.OS === "ios" ? KEYBOARD_OFFSET_IOS : 0}
       >
-        <View className="p-4">
-          <View className="rounded-[32px] border border-border/50 bg-secondary/20 p-4">
+        <View className="p-4 pt-2">
+          <View className="rounded-[24px] border border-border bg-secondary/10 p-2">
             <TextInput
-              className="mb-4 px-2 text-foreground text-lg"
-              placeholder="Ask Whex anything"
+              className="max-h-32 min-h-[44px] px-4 text-base text-foreground"
+              multiline
+              onChangeText={setInputText}
+              placeholder="Ask Whex anything..."
               placeholderTextColor={theme.colors.mutedForeground}
+              value={inputText}
             />
-            <View className="flex-row items-center justify-between">
+            <View className="flex-row items-center justify-between px-2 pt-2 pb-1">
               <View className="flex-row items-center gap-2">
                 <Button
                   className="h-8 w-8 rounded-full bg-muted/50"
@@ -74,21 +209,30 @@ export default function Chat() {
                 >
                   <Plus color={theme.colors.foreground} size={16} />
                 </Button>
-                <View className="flex-row items-center gap-1 rounded-full bg-muted/50 px-3 py-1.5">
-                  <Text className="font-medium text-foreground text-xs">
-                    Claude Haiku 4.5
+                <View className="flex-row items-center gap-1 rounded-full bg-muted/50 px-2 py-1">
+                  <Text className="font-medium text-muted-foreground text-xs">
+                    GPT-4o
                   </Text>
-                  <ChevronDown color={theme.colors.mutedForeground} size={12} />
+                  <ChevronDown color={theme.colors.mutedForeground} size={10} />
                 </View>
               </View>
-              <View className="flex-row items-center gap-3">
-                <Mic color={theme.colors.mutedForeground} size={24} />
-                <Button
-                  className="h-8 w-8 rounded-full bg-muted/50"
-                  size="icon"
-                >
-                  <ArrowUp color={theme.colors.foreground} size={16} />
-                </Button>
+              <View className="flex-row items-center gap-2">
+                {inputText.length > 0 ? (
+                  <Button
+                    className="h-8 w-8 rounded-full bg-primary"
+                    onPress={handleSend}
+                    size="icon"
+                  >
+                    <ArrowUp color={theme.colors.primaryForeground} size={16} />
+                  </Button>
+                ) : (
+                  <Button
+                    className="h-8 w-8 rounded-full bg-muted/50"
+                    size="icon"
+                  >
+                    <Mic color={theme.colors.foreground} size={16} />
+                  </Button>
+                )}
               </View>
             </View>
           </View>

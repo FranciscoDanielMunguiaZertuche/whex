@@ -14,7 +14,7 @@ function TabLayoutContent() {
       <Tabs
         screenOptions={{
           headerShown: false,
-          tabBarActiveTintColor: theme.colors.info,
+          tabBarActiveTintColor: theme.colors.primary,
           tabBarInactiveTintColor: theme.colors.mutedForeground,
           tabBarStyle: {
             backgroundColor: theme.colors.card,
@@ -27,7 +27,7 @@ function TabLayoutContent() {
           options={{
             title: "Chat",
             tabBarIcon: ({ color }) => (
-              <Ionicons color={color} name="chatbubble" size={24} />
+              <Ionicons color={color} name="chatbubble-outline" size={24} />
             ),
           }}
         />
@@ -36,7 +36,7 @@ function TabLayoutContent() {
           options={{
             title: "Tasks",
             tabBarIcon: ({ color }) => (
-              <Ionicons color={color} name="checkbox" size={24} />
+              <Ionicons color={color} name="checkbox-outline" size={24} />
             ),
           }}
         />
@@ -51,7 +51,12 @@ function TabLayoutContent() {
           options={{
             title: "",
             tabBarIcon: () => (
-              <Ionicons color={theme.colors.info} name="add-circle" size={32} />
+              <Ionicons
+                color={theme.colors.primary}
+                name="add-circle"
+                size={48}
+                style={{ marginBottom: 4 }}
+              />
             ),
             tabBarLabel: () => null,
           }}
@@ -61,7 +66,7 @@ function TabLayoutContent() {
           options={{
             title: "Notes",
             tabBarIcon: ({ color }) => (
-              <Ionicons color={color} name="document-text" size={24} />
+              <Ionicons color={color} name="document-text-outline" size={24} />
             ),
           }}
         />
@@ -70,7 +75,7 @@ function TabLayoutContent() {
           options={{
             title: "Calendar",
             tabBarIcon: ({ color }) => (
-              <Ionicons color={color} name="calendar" size={24} />
+              <Ionicons color={color} name="calendar-outline" size={24} />
             ),
           }}
         />

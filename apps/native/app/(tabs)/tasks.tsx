@@ -2,12 +2,11 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Calendar,
   Check,
-  ChevronDown,
-  Columns,
-  Flag,
-  List,
-  Plus,
+  Lightbulb,
+  Mail,
+  MoreHorizontal,
   Sparkles,
+  Star,
 } from "lucide-react-native";
 import { useCallback, useMemo, useState } from "react";
 import { FlatList, RefreshControl, TouchableOpacity, View } from "react-native";
@@ -18,6 +17,7 @@ import { Text } from "@/components/ui/text";
 import { useDrawer } from "@/lib/drawer-context";
 import { useTheme } from "@/lib/theme-context";
 import { cn } from "@/lib/utils";
+import type { Theme } from "@/theme";
 import { trpc } from "@/utils/trpc";
 
 // Mock data for when user is not logged in
@@ -28,6 +28,7 @@ const MOCK_TASKS = [
     status: "pending" as const,
     isPriority: true,
     projectName: "Product",
+    dueTime: "5:00 PM",
   },
   {
     id: "2",
@@ -35,6 +36,7 @@ const MOCK_TASKS = [
     status: "pending" as const,
     isPriority: true,
     projectName: "Fundraising",
+    dueTime: "2:00 PM",
   },
   {
     id: "3",
@@ -49,6 +51,7 @@ const MOCK_TASKS = [
     status: "pending" as const,
     isPriority: true,
     projectName: "Finance",
+    dueTime: "Tomorrow 10 AM",
   },
   {
     id: "5",
@@ -75,11 +78,131 @@ const MOCK_TASKS = [
 
 type Task = (typeof MOCK_TASKS)[number];
 
+function TasksHeader({
+  priorityTasks,
+  renderTaskItem,
+  theme,
+}: {
+  priorityTasks: Task[];
+  renderTaskItem: (props: { item: Task }) => React.ReactElement;
+  theme: Theme;
+}) {
+  return (
+    <View>
+      {/* AI Focus Briefing */}
+      <View className="mb-6 rounded-2xl border border-border/50 bg-card p-4 shadow-sm">
+        <View className="mb-2 flex-row items-center justify-between">
+          <View className="flex-row items-center gap-2">
+            <Sparkles color={theme.colors.primary} size={16} />
+            <Text className="font-bold text-primary text-xs uppercase tracking-wider">
+              Daily Briefing
+            </Text>
+          </View>
+          <TouchableOpacity>
+            <Text className="font-medium text-muted-foreground text-xs">
+              Tap to expand ↗
+            </Text>
+          </TouchableOpacity>
+        </View>
+        <Text className="font-medium text-foreground text-lg">
+          Good morning. 3 priorities, 1 overdue, 30-min gap at 2 PM.
+        </Text>
+      </View>
+
+      {/* Priorities Section */}
+      {priorityTasks.length > 0 && (
+        <View className="mb-6">
+          <View className="mb-3 flex-row items-center justify-between">
+            <Text className="font-bold text-muted-foreground text-xs uppercase tracking-wider">
+              Priorities ({priorityTasks.length})
+            </Text>
+          </View>
+          {priorityTasks.map((task) => (
+            <View key={task.id}>{renderTaskItem({ item: task })}</View>
+          ))}
+        </View>
+      )}
+
+      {/* Actionable Emails (Mock) */}
+      <View className="mb-6">
+        <View className="mb-3 flex-row items-center justify-between">
+          <Text className="font-bold text-muted-foreground text-xs uppercase tracking-wider">
+            Actionable Emails (2)
+          </Text>
+        </View>
+        <View className="mb-3 rounded-2xl border border-border/30 bg-card/50 p-4">
+          <View className="mb-2 flex-row items-center justify-between">
+            <View className="flex-row items-center gap-2">
+              <Mail color={theme.colors.mutedForeground} size={14} />
+              <Text className="font-medium text-foreground text-sm">
+                john@company.com
+              </Text>
+            </View>
+            <Text className="text-muted-foreground text-xs">10m ago</Text>
+          </View>
+          <Text className="mb-1 font-medium text-foreground text-sm">
+            Re: Q3 Budget - needs review
+          </Text>
+          <Text className="mb-3 text-muted-foreground text-xs">
+            AI: Asks for feedback by Friday
+          </Text>
+          <View className="flex-row gap-2">
+            <Button className="h-8" size="sm" variant="outline">
+              <Text>Reply</Text>
+            </Button>
+            <Button className="h-8" size="sm" variant="outline">
+              <Text>Archive</Text>
+            </Button>
+            <Button className="h-8" size="sm" variant="secondary">
+              <Text>→ Task</Text>
+            </Button>
+          </View>
+        </View>
+      </View>
+
+      {/* AI Suggestions (Mock) */}
+      <View className="mb-6">
+        <View className="mb-3 flex-row items-center justify-between">
+          <Text className="font-bold text-muted-foreground text-xs uppercase tracking-wider">
+            AI Suggestions (1)
+          </Text>
+        </View>
+        <View className="flex-row items-center justify-between rounded-2xl border border-primary/30 border-dashed bg-primary/5 p-4">
+          <View className="flex-1 flex-row items-center gap-3">
+            <View className="h-8 w-8 items-center justify-center rounded-full bg-primary/10">
+              <Lightbulb color={theme.colors.primary} size={16} />
+            </View>
+            <View>
+              <Text className="font-medium text-foreground text-sm">
+                Draft Q3 Report for Sarah?
+              </Text>
+              <Text className="text-muted-foreground text-xs">
+                Based on email request
+              </Text>
+            </View>
+          </View>
+          <View className="flex-row gap-2">
+            <Button className="h-8 w-8" size="icon" variant="ghost">
+              <Check color={theme.colors.primary} size={16} />
+            </Button>
+          </View>
+        </View>
+      </View>
+
+      {/* Other Tasks Header */}
+      <View className="mb-3 flex-row items-center justify-between">
+        <Text className="font-bold text-muted-foreground text-xs uppercase tracking-wider">
+          Other Tasks
+        </Text>
+      </View>
+    </View>
+  );
+}
+
 export default function Today() {
   const { theme } = useTheme();
   const { openDrawer } = useDrawer();
   const queryClient = useQueryClient();
-  const [viewMode, setViewMode] = useState<"list" | "board">("list");
   const [mockTasks, setMockTasks] = useState<Task[]>(MOCK_TASKS);
 
   // Fetch tasks - will fail if not logged in, which is fine
@@ -125,18 +248,22 @@ export default function Today() {
   );
 
   // Separate priorities from other tasks
-  const { allTasks, completedCount, totalCount } = useMemo(() => {
+  const { priorityTasks, otherTasks } = useMemo(() => {
     if (!displayTasks) {
-      return { allTasks: [], completedCount: 0, totalCount: 0 };
+      return {
+        priorityTasks: [],
+        otherTasks: [],
+      };
     }
 
     const completed = displayTasks.filter((t) => t.status === "completed");
     const incomplete = displayTasks.filter((t) => t.status !== "completed");
+    const priorities = incomplete.filter((t) => t.isPriority);
+    const others = incomplete.filter((t) => !t.isPriority);
 
     return {
-      allTasks: [...incomplete, ...completed],
-      completedCount: completed.length,
-      totalCount: displayTasks.length,
+      priorityTasks: priorities,
+      otherTasks: [...others, ...completed],
     };
   }, [displayTasks]);
 
@@ -170,7 +297,9 @@ export default function Today() {
             </Text>
             <View className="flex-row items-center gap-2">
               <Calendar color={theme.colors.mutedForeground} size={12} />
-              <Text className="text-muted-foreground text-xs">today</Text>
+              <Text className="text-muted-foreground text-xs">
+                {item.dueTime || "today"}
+              </Text>
               <Text className="text-muted-foreground text-xs">•</Text>
               <Text className="font-medium text-primary text-xs">
                 {item.projectName || "Inbox"}
@@ -180,15 +309,13 @@ export default function Today() {
         </View>
 
         <View className="ml-2">
-          <Flag
-            color={
-              item.isPriority
-                ? theme.colors.warning
-                : theme.colors.mutedForeground
-            }
-            fill={item.isPriority ? theme.colors.warning : "transparent"}
-            size={16}
-          />
+          {item.isPriority && (
+            <Star
+              color={theme.colors.warning}
+              fill={theme.colors.warning}
+              size={16}
+            />
+          )}
         </View>
       </TouchableOpacity>
     );
@@ -202,100 +329,24 @@ export default function Today() {
           <MenuIcon color={theme.colors.foreground} size={24} />
         </Button>
         <Text className="font-semibold text-lg">Tasks</Text>
-        <Button size="icon" variant="ghost">
-          <Plus color={theme.colors.foreground} size={24} />
-        </Button>
-      </View>
-
-      {/* Breadcrumb & Filter */}
-      <View className="px-4 py-4">
-        <View className="mb-6 flex-row items-center justify-between">
-          <View className="flex-row items-center gap-2">
-            <View className="rounded-md bg-secondary/30 px-2 py-1">
-              <Text className="font-bold text-muted-foreground text-xs uppercase tracking-wider">
-                VECTAL
-              </Text>
-            </View>
-            <Text className="text-lg text-muted-foreground">/</Text>
-            <Text className="font-bold text-foreground text-xl">all tasks</Text>
-          </View>
-
-          <View className="flex-row items-center gap-3">
-            <View className="rounded-full bg-secondary/30 px-3 py-1">
-              <Text className="font-medium text-muted-foreground text-xs">
-                {completedCount}/{totalCount}
-              </Text>
-            </View>
-            <ChevronDown color={theme.colors.mutedForeground} size={16} />
-          </View>
-        </View>
-
-        {/* Toolbar */}
-        <View className="mb-4 flex-row items-center justify-between">
-          <View className="flex-row items-center gap-1 rounded-lg border border-border/30 bg-secondary/20 p-1">
-            <TouchableOpacity
-              className={cn(
-                "rounded-md p-2",
-                viewMode === "list" ? "bg-primary/20" : "bg-transparent"
-              )}
-              onPress={() => setViewMode("list")}
-            >
-              <List
-                color={
-                  viewMode === "list"
-                    ? theme.colors.primary
-                    : theme.colors.mutedForeground
-                }
-                size={18}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity
-              className={cn(
-                "rounded-md p-2",
-                viewMode === "board" ? "bg-primary/20" : "bg-transparent"
-              )}
-              onPress={() => setViewMode("board")}
-            >
-              <Columns
-                color={
-                  viewMode === "board"
-                    ? theme.colors.primary
-                    : theme.colors.mutedForeground
-                }
-                size={18}
-              />
-            </TouchableOpacity>
-          </View>
-
-          <View className="flex-row items-center gap-2">
-            <Text className="text-muted-foreground text-sm">Priority</Text>
-            <ChevronDown color={theme.colors.mutedForeground} size={14} />
-          </View>
-
-          <TouchableOpacity className="flex-row items-center gap-2 rounded-full bg-foreground px-3 py-2">
-            <Sparkles
-              color={theme.colors.background}
-              fill={theme.colors.background}
-              size={14}
-            />
-            <Text className="font-bold text-background text-xs">
-              AI Toolkit
-            </Text>
-          </TouchableOpacity>
+        <View className="flex-row gap-2">
+          <Button size="icon" variant="ghost">
+            <MoreHorizontal color={theme.colors.foreground} size={24} />
+          </Button>
         </View>
       </View>
 
       {/* Task List */}
       <FlatList
         contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 100 }}
-        data={allTasks}
+        data={otherTasks}
         keyExtractor={(item) => item.id}
-        ListFooterComponent={
-          <View className="mt-8 items-center">
-            <Text className="text-muted-foreground text-sm">
-              completed tasks
-            </Text>
-          </View>
+        ListHeaderComponent={
+          <TasksHeader
+            priorityTasks={priorityTasks}
+            renderTaskItem={renderTaskItem}
+            theme={theme}
+          />
         }
         refreshControl={
           <RefreshControl

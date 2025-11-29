@@ -19,7 +19,7 @@ This is a **mobile-first iOS productivity application** (React Native/Expo) with
 - Full-context AI that understands user's purpose, values, goals, schedule, and communications
 
 **Key Business Rules:**
-- Mobile-first design with thumb-friendly bottom navigation (5 tabs: Chat, Today, +, Calendar, You)
+- Mobile-first design with thumb-friendly bottom navigation (5 tabs: Chat, Tasks, +, Notes, Calendar)
 - All AI responses must be <2 seconds (target <1.5s)
 - Privacy-first: Users can mark events/tasks as "Private" (excluded from AI context)
 - Free tier with GPT-4o, Premium tier with GPT-4.5-Preview/Claude Opus 4.1
@@ -87,7 +87,7 @@ This is a **mobile-first iOS productivity application** (React Native/Expo) with
 │   │   │   ├── _layout.tsx         # Root layout with providers
 │   │   │   ├── index.tsx           # App entry/redirect screen
 │   │   │   ├── modal.tsx           # Quick Add (+) modal
-│   │   │   ├── profile.tsx         # Profile/"You" screen
+│   │   │   ├── profile.tsx         # Profile/"You" screen (accessed via Drawer)
 │   │   │   ├── +not-found.tsx      # 404 screen
 │   │   │   ├── (auth)/             # Auth route group
 │   │   │   │   ├── _layout.tsx     # Auth layout
