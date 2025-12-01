@@ -88,18 +88,30 @@ This is a **mobile-first iOS productivity application** (React Native/Expo) with
 │   │   │   ├── index.tsx           # App entry/redirect screen
 │   │   │   ├── modal.tsx           # Quick Add (+) modal
 │   │   │   ├── profile.tsx         # Profile/"You" screen (accessed via Drawer)
+│   │   │   ├── search.tsx          # Universal search screen
+│   │   │   ├── settings.tsx        # Settings screen
 │   │   │   ├── +not-found.tsx      # 404 screen
 │   │   │   ├── (auth)/             # Auth route group
 │   │   │   │   ├── _layout.tsx     # Auth layout
 │   │   │   │   ├── sign-in.tsx     # Sign in screen
 │   │   │   │   └── sign-up.tsx     # Sign up screen
-│   │   │   └── (tabs)/             # Bottom tab navigator
-│   │   │       ├── _layout.tsx     # Tab bar layout
-│   │   │       ├── calendar.tsx    # Calendar screen
-│   │   │       ├── chat.tsx        # AI Chat screen
-│   │   │       ├── create.tsx      # Create tab (redirects to modal)
-│   │   │       ├── notes.tsx       # Notes screen
-│   │   │       └── tasks.tsx       # Tasks screen
+│   │   │   ├── (tabs)/             # Bottom tab navigator
+│   │   │   │   ├── _layout.tsx     # Tab bar layout
+│   │   │   │   ├── calendar.tsx    # Calendar screen
+│   │   │   │   ├── chat.tsx        # AI Chat screen
+│   │   │   │   ├── create.tsx      # Create tab (redirects to modal)
+│   │   │   │   ├── notes.tsx       # Notes screen
+│   │   │   │   └── tasks.tsx       # Tasks screen
+│   │   │   ├── focus/              # Focus mode route group
+│   │   │   │   └── [taskId].tsx    # Focus mode screen for specific task
+│   │   │   ├── goal/               # Goal detail route group
+│   │   │   │   └── [id].tsx        # Goal detail screen
+│   │   │   ├── note/               # Note detail route group
+│   │   │   │   └── [id].tsx        # Note detail screen
+│   │   │   ├── project/            # Project detail route group
+│   │   │   │   └── [id].tsx        # Project detail screen
+│   │   │   └── task/               # Task detail route group
+│   │   │       └── [id].tsx        # Task detail screen
 │   │   ├── components/             # Shared React Native components
 │   │   │   ├── ui/                 # React Native Reusables (shadcn/ui port)
 │   │   │   │   ├── button.tsx      # Button with variants
@@ -107,6 +119,8 @@ This is a **mobile-first iOS productivity application** (React Native/Expo) with
 │   │   │   │   ├── dialog.tsx      # Modal dialogs
 │   │   │   │   ├── input.tsx       # Text input
 │   │   │   │   ├── text.tsx        # Typography
+│   │   │   │   ├── menu-icon.tsx   # Menu icon component
+│   │   │   │   ├── native-only-animated-view.tsx  # Platform-specific animated view
 │   │   │   │   └── ...             # 33 total components
 │   │   │   ├── chat-drawer.tsx     # Chat history drawer
 │   │   │   ├── container.tsx
@@ -121,6 +135,7 @@ This is a **mobile-first iOS productivity application** (React Native/Expo) with
 │   │   │   ├── drawer-context.tsx  # Drawer state context
 │   │   │   ├── theme-context.tsx   # Theme context for dark mode toggle
 │   │   │   └── utils.ts            # cn() helper for className merging
+│   │   ├── hooks/                  # Custom React hooks (empty, for future use)
 │   │   ├── utils/                  # Utilities
 │   │   │   └── trpc.ts             # tRPC React Query client setup
 │   │   ├── assets/images/          # Static assets
@@ -303,7 +318,7 @@ This is a **mobile-first iOS productivity application** (React Native/Expo) with
 - Components use `class-variance-authority` for variants
 - Use `cn()` from `@/lib/utils` to merge className values
 - All components support NativeWind className prop
-- 32 components available: accordion, alert, alert-dialog, aspect-ratio, avatar, badge, button, card, checkbox, collapsible, context-menu, dialog, dropdown-menu, hover-card, icon, input, label, menubar, popover, progress, radio-group, select, separator, skeleton, switch, tabs, text, textarea, toggle, toggle-group, tooltip
+- 33 components available: accordion, alert, alert-dialog, aspect-ratio, avatar, badge, button, card, checkbox, collapsible, context-menu, dialog, dropdown-menu, hover-card, icon, input, label, menu-icon, menubar, native-only-animated-view, popover, progress, radio-group, select, separator, skeleton, switch, tabs, text, textarea, toggle, toggle-group, tooltip
 - Components folder (`apps/native/components/ui`) is excluded from Biome linting
 
 #### Theme Color Classes Available:
