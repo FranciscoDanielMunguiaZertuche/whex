@@ -1,3 +1,4 @@
+import { useRouter } from "expo-router";
 import { Pin, Plus, Search } from "lucide-react-native";
 import { ScrollView, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -10,6 +11,7 @@ import { useTheme } from "@/lib/theme-context";
 export default function NotesScreen() {
   const { theme } = useTheme();
   const { openDrawer } = useDrawer();
+  const router = useRouter();
 
   return (
     <SafeAreaView className="flex-1 bg-background">
@@ -20,10 +22,18 @@ export default function NotesScreen() {
         </Button>
         <Text className="font-bold text-foreground text-xl">Notes</Text>
         <View className="flex-row gap-2">
-          <Button size="icon" variant="ghost">
+          <Button
+            onPress={() => router.push("/search")}
+            size="icon"
+            variant="ghost"
+          >
             <Search color={theme.colors.foreground} size={24} />
           </Button>
-          <Button size="icon" variant="ghost">
+          <Button
+            onPress={() => router.push("/note/new")}
+            size="icon"
+            variant="ghost"
+          >
             <Plus color={theme.colors.foreground} size={24} />
           </Button>
         </View>
@@ -40,7 +50,10 @@ export default function NotesScreen() {
           </View>
 
           <View className="gap-3">
-            <TouchableOpacity className="rounded-xl border border-border bg-card p-4">
+            <TouchableOpacity
+              className="rounded-xl border border-border bg-card p-4"
+              onPress={() => router.push("/note/1")}
+            >
               <View className="mb-2 flex-row items-start justify-between">
                 <Text className="font-semibold text-base text-foreground">
                   My Core Values
@@ -62,7 +75,10 @@ export default function NotesScreen() {
               </Text>
             </TouchableOpacity>
 
-            <TouchableOpacity className="rounded-xl border border-border bg-card p-4">
+            <TouchableOpacity
+              className="rounded-xl border border-border bg-card p-4"
+              onPress={() => router.push("/note/2")}
+            >
               <View className="mb-2 flex-row items-start justify-between">
                 <Text className="font-semibold text-base text-foreground">
                   Project Ideas for 2025
@@ -93,7 +109,10 @@ export default function NotesScreen() {
           </Text>
 
           <View className="gap-3">
-            <TouchableOpacity className="rounded-xl border border-border bg-card p-4">
+            <TouchableOpacity
+              className="rounded-xl border border-border bg-card p-4"
+              onPress={() => router.push("/note/3")}
+            >
               <Text className="mb-2 font-semibold text-base text-foreground">
                 Meeting notes - Sarah call
               </Text>

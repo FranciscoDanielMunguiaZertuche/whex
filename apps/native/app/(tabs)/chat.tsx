@@ -1,3 +1,4 @@
+import { useLocalSearchParams } from "expo-router";
 import {
   ArrowUp,
   Bot,
@@ -49,9 +50,24 @@ const KEYBOARD_OFFSET_IOS = 90;
 export default function Chat() {
   const { theme } = useTheme();
   const { openDrawer } = useDrawer();
+  const { onboarding } = useLocalSearchParams();
   const [messages, setMessages] = useState<Message[]>(INITIAL_MESSAGES);
   const [inputText, setInputText] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
   const flatListRef = useRef<FlatList>(null);
+
+  useEffect(() => {
+    if (onboarding === "true") {
+      setMessages([
+        {
+          id: "welcome",
+          text: "Welcome! I'm your AI productivity companion. What's the first thing on your mind?",
+          sender: "ai",
+          timestamp: new Date(),
+        },
+      ]);
+    }
+  }, [onboarding]);
 
   const handleSend = () => {
     if (!inputText.trim()) {
@@ -67,17 +83,32 @@ export default function Chat() {
 
     setMessages((prev) => [...prev, userMessage]);
     setInputText("");
+    setIsTyping(true);
 
     // Simulate AI response
     setTimeout(() => {
-      const aiMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        text: "I've added that to your tasks. Is there anything else you need help with?",
-        sender: "ai",
-        timestamp: new Date(),
-        actions: ["View Tasks", "Add another"],
-      };
+      let aiMessage: Message;
+
+      if (onboarding === "true" && messages.length === 1) {
+        aiMessage = {
+          id: (Date.now() + 1).toString(),
+          text: "Added! I've scheduled that for you. ✓\n\nGreat start! I can help you 10x more if I know your bigger purpose and goals. Want to spend 5 minutes defining your North Star?",
+          sender: "ai",
+          timestamp: new Date(),
+          actions: ["Start North Star", "Maybe Later"],
+        };
+      } else {
+        aiMessage = {
+          id: (Date.now() + 1).toString(),
+          text: "I've added that to your tasks. Is there anything else you need help with?",
+          sender: "ai",
+          timestamp: new Date(),
+          actions: ["View Tasks", "Add another"],
+        };
+      }
+
       setMessages((prev) => [...prev, aiMessage]);
+      setIsTyping(false);
     }, AI_RESPONSE_DELAY);
   };
 
@@ -116,6 +147,17 @@ export default function Chat() {
             )}
           >
             {item.text}
+          </Text>
+          <Text
+            className={cn(
+              "mt-1 self-end text-[10px]",
+              isUser ? "text-primary-foreground/70" : "text-muted-foreground"
+            )}
+          >
+            {item.timestamp.toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            })}
           </Text>
           {item.actions && !isUser && (
             <View className="mt-3 flex-row flex-wrap gap-2">
@@ -181,6 +223,18 @@ export default function Chat() {
         contentContainerStyle={{ padding: 16, paddingBottom: 20 }}
         data={messages}
         keyExtractor={(item) => item.id}
+        ListFooterComponent={
+          isTyping ? (
+            <View className="mb-4 flex-row justify-start">
+              <View className="mr-2 h-8 w-8 items-center justify-center rounded-full bg-primary/10">
+                <Bot color={theme.colors.primary} size={16} />
+              </View>
+              <View className="rounded-2xl rounded-tl-sm bg-muted/50 px-4 py-3">
+                <Text className="text-foreground">Thinking...</Text>
+              </View>
+            </View>
+          ) : null
+        }
         ref={flatListRef}
         renderItem={renderMessage}
         showsVerticalScrollIndicator={false}

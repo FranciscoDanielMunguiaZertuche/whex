@@ -1,22 +1,39 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { router } from "expo-router";
 import {
-  Calendar,
   Check,
+  Filter,
   Lightbulb,
   Mail,
   MoreHorizontal,
+  Search,
   Sparkles,
-  Star,
 } from "lucide-react-native";
 import { useCallback, useMemo, useState } from "react";
-import { FlatList, RefreshControl, TouchableOpacity, View } from "react-native";
+import {
+  Alert,
+  FlatList,
+  RefreshControl,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { SwipeableTaskCard } from "@/components/swipeable-task-card";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { MenuIcon } from "@/components/ui/menu-icon";
 import { Text } from "@/components/ui/text";
 import { useDrawer } from "@/lib/drawer-context";
 import { useTheme } from "@/lib/theme-context";
-import { cn } from "@/lib/utils";
 import type { Theme } from "@/theme";
 import { trpc } from "@/utils/trpc";
 
@@ -76,14 +93,55 @@ const MOCK_TASKS = [
   },
 ];
 
-type Task = (typeof MOCK_TASKS)[number];
+type Task = {
+  id: string;
+  title: string;
+  status: "pending" | "completed";
+  isPriority: boolean;
+  projectName: string;
+  dueTime?: string;
+};
+
+type FilterType = "all" | "priority" | "today" | "completed";
+type SortType = "priority" | "dueDate";
+
+const filterTasks = (tasks: Task[], filter: FilterType) =>
+  tasks.filter((t) => {
+    if (filter === "priority") {
+      return t.isPriority && t.status !== "completed";
+    }
+    if (filter === "today") {
+      return (
+        t.dueTime?.toLowerCase().includes("today") ||
+        t.dueTime?.includes("PM") ||
+        t.dueTime?.includes("AM")
+      );
+    }
+    if (filter === "completed") {
+      return t.status === "completed";
+    }
+    return true;
+  });
+
+const sortTasks = (tasks: Task[], sort: SortType) =>
+  tasks.sort((a, b) => {
+    if (sort === "priority" && a.isPriority !== b.isPriority) {
+      return a.isPriority ? -1 : 1;
+    }
+    if (a.status !== b.status) {
+      return a.status === "pending" ? -1 : 1;
+    }
+    return 0;
+  });
 
 function TasksHeader({
   priorityTasks,
+  overdueCount,
   renderTaskItem,
   theme,
 }: {
   priorityTasks: Task[];
+  overdueCount: number;
   renderTaskItem: (props: { item: Task }) => React.ReactElement;
   theme: Theme;
 }) {
@@ -98,14 +156,19 @@ function TasksHeader({
               Daily Briefing
             </Text>
           </View>
-          <TouchableOpacity>
+          <TouchableOpacity
+            onPress={() =>
+              Alert.alert("Daily Briefing", "Here is your full briefing...")
+            }
+          >
             <Text className="font-medium text-muted-foreground text-xs">
               Tap to expand ↗
             </Text>
           </TouchableOpacity>
         </View>
         <Text className="font-medium text-foreground text-lg">
-          Good morning. 3 priorities, 1 overdue, 30-min gap at 2 PM.
+          Good morning. {priorityTasks.length} priorities
+          {overdueCount > 0 ? `, ${overdueCount} overdue` : ""}.
         </Text>
       </View>
 
@@ -204,6 +267,10 @@ export default function Today() {
   const { openDrawer } = useDrawer();
   const queryClient = useQueryClient();
   const [mockTasks, setMockTasks] = useState<Task[]>(MOCK_TASKS);
+  const [filter, setFilter] = useState<
+    "all" | "priority" | "today" | "completed"
+  >("all");
+  const [sort, setSort] = useState<"priority" | "dueDate">("priority");
 
   // Fetch tasks - will fail if not logged in, which is fine
   const {
@@ -215,7 +282,27 @@ export default function Today() {
 
   // Use mock data when there's an error (not logged in) or no data
   const useMockData = isError || !tasks;
-  const displayTasks = useMockData ? mockTasks : tasks;
+  const displayTasks: Task[] = useMemo(() => {
+    if (useMockData) {
+      return mockTasks;
+    }
+    if (!tasks) {
+      return [];
+    }
+    return tasks.map((t) => ({
+      id: t.id,
+      title: t.title,
+      status: t.status as "pending" | "completed",
+      isPriority: false,
+      projectName: "Inbox",
+      dueTime: t.dueDate
+        ? new Date(t.dueDate).toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          })
+        : undefined,
+    }));
+  }, [useMockData, mockTasks, tasks]);
 
   // Toggle complete mutation
   const toggleCompleteMutation = useMutation(
@@ -247,6 +334,17 @@ export default function Today() {
     [toggleCompleteMutation, useMockData]
   );
 
+  const handleDelete = useCallback(
+    (id: string) => {
+      if (useMockData) {
+        setMockTasks((prev) => prev.filter((t) => t.id !== id));
+      } else {
+        // TODO: Implement delete mutation
+      }
+    },
+    [useMockData]
+  );
+
   // Separate priorities from other tasks
   const { priorityTasks, otherTasks } = useMemo(() => {
     if (!displayTasks) {
@@ -256,8 +354,11 @@ export default function Today() {
       };
     }
 
-    const completed = displayTasks.filter((t) => t.status === "completed");
-    const incomplete = displayTasks.filter((t) => t.status !== "completed");
+    const filtered = filterTasks([...displayTasks], filter);
+    const sorted = sortTasks(filtered, sort);
+
+    const completed = sorted.filter((t) => t.status === "completed");
+    const incomplete = sorted.filter((t) => t.status !== "completed");
     const priorities = incomplete.filter((t) => t.isPriority);
     const others = incomplete.filter((t) => !t.isPriority);
 
@@ -265,61 +366,23 @@ export default function Today() {
       priorityTasks: priorities,
       otherTasks: [...others, ...completed],
     };
-  }, [displayTasks]);
+  }, [displayTasks, filter, sort]);
 
-  const renderTaskItem = ({ item }: { item: Task }) => {
-    const isCompleted = item.status === "completed";
-
-    return (
-      <TouchableOpacity
-        className="mb-3 flex-row items-center justify-between rounded-2xl border border-border/30 bg-card/50 p-4"
-        onPress={() => handleToggleComplete(item.id, !isCompleted)}
-      >
-        <View className="flex-1 flex-row items-start gap-4">
-          <View className="mt-1">
-            {isCompleted ? (
-              <View className="h-5 w-5 items-center justify-center rounded-full border border-muted-foreground bg-muted-foreground/20">
-                <Check color={theme.colors.mutedForeground} size={12} />
-              </View>
-            ) : (
-              <View className="h-5 w-5 rounded-full border border-muted-foreground/50" />
-            )}
-          </View>
-
-          <View className="flex-1">
-            <Text
-              className={cn(
-                "mb-1 font-medium text-base",
-                isCompleted && "text-muted-foreground line-through"
-              )}
-            >
-              {item.title}
-            </Text>
-            <View className="flex-row items-center gap-2">
-              <Calendar color={theme.colors.mutedForeground} size={12} />
-              <Text className="text-muted-foreground text-xs">
-                {item.dueTime || "today"}
-              </Text>
-              <Text className="text-muted-foreground text-xs">•</Text>
-              <Text className="font-medium text-primary text-xs">
-                {item.projectName || "Inbox"}
-              </Text>
-            </View>
-          </View>
-        </View>
-
-        <View className="ml-2">
-          {item.isPriority && (
-            <Star
-              color={theme.colors.warning}
-              fill={theme.colors.warning}
-              size={16}
-            />
-          )}
-        </View>
-      </TouchableOpacity>
-    );
-  };
+  const renderTaskItem = ({ item }: { item: Task }) => (
+    <SwipeableTaskCard
+      id={item.id}
+      isCompleted={item.status === "completed"}
+      isPriority={item.isPriority}
+      onDelete={handleDelete}
+      onPress={() =>
+        // biome-ignore lint/suspicious/noExplicitAny: router type workaround
+        router.push({ pathname: "/task/[id]", params: { id: item.id } } as any)
+      }
+      onToggleComplete={handleToggleComplete}
+      projectName={item.projectName}
+      title={item.title}
+    />
+  );
 
   return (
     <SafeAreaView className="flex-1 bg-background">
@@ -330,9 +393,90 @@ export default function Today() {
         </Button>
         <Text className="font-semibold text-lg">Tasks</Text>
         <View className="flex-row gap-2">
-          <Button size="icon" variant="ghost">
-            <MoreHorizontal color={theme.colors.foreground} size={24} />
+          <Button
+            onPress={() =>
+              // biome-ignore lint/suspicious/noExplicitAny: router type workaround
+              router.push("/search" as any)
+            }
+            size="icon"
+            variant="ghost"
+          >
+            <Search color={theme.colors.foreground} size={24} />
           </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button size="icon" variant="ghost">
+                <Filter color={theme.colors.foreground} size={24} />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56">
+              <DropdownMenuLabel>Filter Tasks</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuRadioGroup
+                onValueChange={(v) => setFilter(v as FilterType)}
+                value={filter}
+              >
+                <DropdownMenuRadioItem value="all">
+                  <Text>All Tasks</Text>
+                </DropdownMenuRadioItem>
+                <DropdownMenuRadioItem value="priority">
+                  <Text>Priority Only</Text>
+                </DropdownMenuRadioItem>
+                <DropdownMenuRadioItem value="today">
+                  <Text>Due Today</Text>
+                </DropdownMenuRadioItem>
+                <DropdownMenuRadioItem value="completed">
+                  <Text>Completed</Text>
+                </DropdownMenuRadioItem>
+              </DropdownMenuRadioGroup>
+              <DropdownMenuSeparator />
+              <DropdownMenuLabel>Sort By</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuRadioGroup
+                onValueChange={(v) => setSort(v as SortType)}
+                value={sort}
+              >
+                <DropdownMenuRadioItem value="priority">
+                  <Text>Priority</Text>
+                </DropdownMenuRadioItem>
+                <DropdownMenuRadioItem value="dueDate">
+                  <Text>Due Date</Text>
+                </DropdownMenuRadioItem>
+              </DropdownMenuRadioGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button size="icon" variant="ghost">
+                <MoreHorizontal color={theme.colors.foreground} size={24} />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuLabel>Options</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onPress={() => refetch()}>
+                <Text>Refresh All</Text>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onPress={() => {
+                  setMockTasks((prev) =>
+                    prev.map((t) => ({ ...t, status: "completed" as const }))
+                  );
+                }}
+              >
+                <Text>Mark All Complete</Text>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onPress={() =>
+                  // biome-ignore lint/suspicious/noExplicitAny: router type workaround
+                  router.push("/settings" as any)
+                }
+              >
+                <Text>Settings</Text>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </View>
       </View>
 
@@ -343,6 +487,7 @@ export default function Today() {
         keyExtractor={(item) => item.id}
         ListHeaderComponent={
           <TasksHeader
+            overdueCount={0}
             priorityTasks={priorityTasks}
             renderTaskItem={renderTaskItem}
             theme={theme}

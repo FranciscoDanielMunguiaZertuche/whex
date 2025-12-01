@@ -1,9 +1,11 @@
+import { router } from "expo-router";
 import {
   ChevronLeft,
   ChevronRight,
   Clock,
   MoreHorizontal,
 } from "lucide-react-native";
+import { useMemo, useState } from "react";
 import { ScrollView, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "@/components/ui/button";
@@ -18,10 +20,67 @@ const END_HOUR = 20; // 8 PM
 const HOURS_COUNT = END_HOUR - START_HOUR + 1;
 const NOON = 12;
 const ROW_HEIGHT = 80;
+const DAYS_IN_WEEK = 7;
+const SUNDAY_OFFSET = -6;
+const MONDAY_OFFSET = 1;
+
+// Helper functions
+const getStartOfWeek = (date: Date) => {
+  const d = new Date(date);
+  const day = d.getDay();
+  const diff = d.getDate() - day + (day === 0 ? SUNDAY_OFFSET : MONDAY_OFFSET); // Monday start
+  return new Date(d.setDate(diff));
+};
+
+const formatMonthYear = (date: Date) =>
+  date.toLocaleDateString("en-US", { month: "short", year: "numeric" });
+
+const formatDayName = (date: Date) =>
+  date.toLocaleDateString("en-US", { weekday: "short" });
+
+const isSameDay = (d1: Date, d2: Date) =>
+  d1.getDate() === d2.getDate() &&
+  d1.getMonth() === d2.getMonth() &&
+  d1.getFullYear() === d2.getFullYear();
 
 export default function CalendarScreen() {
   const { theme } = useTheme();
   const { openDrawer } = useDrawer();
+
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [currentWeekStart, setCurrentWeekStart] = useState(() =>
+    getStartOfWeek(new Date())
+  );
+
+  const weekDays = useMemo(
+    () =>
+      Array.from({ length: 7 }, (_, i) => {
+        const d = new Date(currentWeekStart);
+        d.setDate(d.getDate() + i);
+        return d;
+      }),
+    [currentWeekStart]
+  );
+
+  const handlePrevWeek = () => {
+    const newStart = new Date(currentWeekStart);
+    newStart.setDate(newStart.getDate() - DAYS_IN_WEEK);
+    setCurrentWeekStart(newStart);
+  };
+
+  const handleNextWeek = () => {
+    const newStart = new Date(currentWeekStart);
+    newStart.setDate(newStart.getDate() + DAYS_IN_WEEK);
+    setCurrentWeekStart(newStart);
+  };
+
+  const handleTimeSlotPress = (hour: number) => {
+    const date = new Date(selectedDate);
+    date.setHours(hour, 0, 0, 0);
+    // Navigate to modal with params (need to update modal to handle them)
+    router.push(`/modal?type=event&date=${date.toISOString()}`);
+  };
+
   const hours = Array.from({ length: HOURS_COUNT }, (_, i) => i + START_HOUR);
 
   return (
@@ -32,11 +91,23 @@ export default function CalendarScreen() {
           <Button onPress={openDrawer} size="icon" variant="ghost">
             <MenuIcon color={theme.colors.foreground} size={24} />
           </Button>
-          <Button className="h-8 w-8" size="icon" variant="ghost">
+          <Button
+            className="h-8 w-8"
+            onPress={handlePrevWeek}
+            size="icon"
+            variant="ghost"
+          >
             <ChevronLeft color={theme.colors.foreground} size={20} />
           </Button>
-          <Text className="font-bold text-foreground text-lg">Nov 2025</Text>
-          <Button className="h-8 w-8" size="icon" variant="ghost">
+          <Text className="font-bold text-foreground text-lg">
+            {formatMonthYear(currentWeekStart)}
+          </Text>
+          <Button
+            className="h-8 w-8"
+            onPress={handleNextWeek}
+            size="icon"
+            variant="ghost"
+          >
             <ChevronRight color={theme.colors.foreground} size={20} />
           </Button>
         </View>
@@ -55,32 +126,40 @@ export default function CalendarScreen() {
 
       {/* Week Strip */}
       <View className="flex-row justify-between border-border/50 border-b bg-card/30 px-4 py-4">
-        {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day, index) => (
-          <View
-            className={cn(
-              "items-center gap-1",
-              index === 2 && "-my-1 rounded-lg bg-primary/10 px-2 py-1"
-            )}
-            key={day}
-          >
-            <Text
+        {weekDays.map((date) => {
+          const isSelected = isSameDay(date, selectedDate);
+          const isToday = isSameDay(date, new Date());
+
+          return (
+            <TouchableOpacity
               className={cn(
-                "font-medium text-xs",
-                index === 2 ? "text-primary" : "text-muted-foreground"
+                "items-center gap-1 rounded-lg px-2 py-1",
+                isSelected && "bg-primary/10"
               )}
+              key={date.toISOString()}
+              onPress={() => setSelectedDate(date)}
             >
-              {day}
-            </Text>
-            <Text
-              className={cn(
-                "font-bold text-sm",
-                index === 2 ? "text-primary" : "text-foreground"
-              )}
-            >
-              {index + 1}
-            </Text>
-          </View>
-        ))}
+              <Text
+                className={cn(
+                  "font-medium text-xs",
+                  isSelected ? "text-primary" : "text-muted-foreground",
+                  isToday && !isSelected && "text-primary"
+                )}
+              >
+                {formatDayName(date)}
+              </Text>
+              <Text
+                className={cn(
+                  "font-bold text-sm",
+                  isSelected ? "text-primary" : "text-foreground",
+                  isToday && !isSelected && "text-primary"
+                )}
+              >
+                {date.getDate()}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
       </View>
 
       {/* Calendar Scroll */}
@@ -99,82 +178,31 @@ export default function CalendarScreen() {
           </View>
 
           {/* Events Column */}
-          <View className="relative flex-1 py-4">
-            {/* Grid Lines */}
+          <View className="relative flex-1">
             {hours.map((hour) => (
-              <View
-                className="absolute top-0 h-20 w-full border-border/10 border-b"
-                key={`line-${hour}`}
-                style={{ top: (hour - START_HOUR) * ROW_HEIGHT }}
+              <TouchableOpacity
+                className="h-20 w-full border-border/10 border-b"
+                key={hour}
+                onPress={() => handleTimeSlotPress(hour)}
               />
             ))}
 
-            {/* Current Time Indicator (Mock) */}
-            <View
-              className="absolute z-10 w-full flex-row items-center"
-              style={{ top: 220 }}
+            {/* Render Events Here (Mock) */}
+            {/* Example Event */}
+            <TouchableOpacity
+              className="absolute right-2 left-2 rounded-lg border-primary border-l-4 bg-primary/20 p-2"
+              style={{
+                top: (10 - START_HOUR) * ROW_HEIGHT,
+                height: ROW_HEIGHT,
+              }}
             >
-              <View className="-ml-1 h-2 w-2 rounded-full bg-primary" />
-              <View className="h-[2px] flex-1 bg-primary" />
-            </View>
-
-            {/* Event: Team Sync */}
-            <View
-              className="absolute right-2 left-2 h-[70px] rounded-r-md border-blue-500 border-l-4 bg-blue-500/20 p-2"
-              style={{ top: 85 }}
-            >
-              <Text className="font-bold text-blue-700 text-xs dark:text-blue-300">
-                Team Sync
+              <Text className="font-bold text-primary text-xs">
+                Team Meeting
               </Text>
-              <Text className="text-[10px] text-blue-600 dark:text-blue-400">
-                9:00 - 10:00 AM
+              <Text className="text-[10px] text-primary/80">
+                10:00 AM - 11:00 AM
               </Text>
-            </View>
-
-            {/* Task: Draft Report */}
-            <View
-              className="absolute right-2 left-2 h-[110px] rounded-md border border-primary/50 border-dashed bg-card p-2"
-              style={{ top: 170 }}
-            >
-              <View className="mb-1 flex-row items-center gap-1">
-                <Text className="text-xs">⭐</Text>
-                <Text className="font-bold text-foreground text-xs">
-                  Draft Report
-                </Text>
-              </View>
-              <Text className="text-[10px] text-muted-foreground">
-                10:00 AM - 11:30 AM
-              </Text>
-            </View>
-
-            {/* AI Suggestion */}
-            <View
-              className="absolute right-2 left-2 h-[70px] items-center justify-center rounded-md border border-yellow-500/50 border-dashed bg-yellow-500/10 p-2"
-              style={{ top: 410 }}
-            >
-              <View className="flex-row items-center gap-2">
-                <Text>💡</Text>
-                <Text className="font-medium text-xs text-yellow-700 dark:text-yellow-400">
-                  Focus time?
-                </Text>
-              </View>
-              <Text className="text-[10px] text-yellow-600 dark:text-yellow-500">
-                Suggested 1:00 - 2:00 PM
-              </Text>
-            </View>
-
-            {/* Event: Budget Mtg */}
-            <View
-              className="absolute right-2 left-2 h-[70px] rounded-r-md border-purple-500 border-l-4 bg-purple-500/20 p-2"
-              style={{ top: 640 }}
-            >
-              <Text className="font-bold text-purple-700 text-xs dark:text-purple-300">
-                Budget Mtg
-              </Text>
-              <Text className="text-[10px] text-purple-600 dark:text-purple-400">
-                4:00 - 5:00 PM
-              </Text>
-            </View>
+            </TouchableOpacity>
           </View>
         </View>
       </ScrollView>

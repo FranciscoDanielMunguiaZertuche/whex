@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import {
   Calendar,
   Clock,
@@ -65,13 +65,26 @@ function parseInput(title: string): ParsedData {
 
 export default function QuickAddModal() {
   const router = useRouter();
+  const params = useLocalSearchParams();
   const { theme } = useTheme();
   const queryClient = useQueryClient();
 
   const [title, setTitle] = useState("");
-  const [type, setType] = useState<"task" | "note" | "event">("task");
+  const [type, setType] = useState<"task" | "note" | "event">(
+    (params.type as "task" | "note" | "event") || "task"
+  );
   const [isParsing, setIsParsing] = useState(false);
   const [parsedData, setParsedData] = useState<ParsedData>({});
+
+  useEffect(() => {
+    if (params.date) {
+      const date = new Date(params.date as string);
+      setParsedData((prev) => ({
+        ...prev,
+        date: date.toLocaleDateString(),
+      }));
+    }
+  }, [params.date]);
 
   const createTaskMutation = useMutation(
     trpc.task.create.mutationOptions({

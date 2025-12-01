@@ -19,10 +19,12 @@ export type SwipeableTaskCardProps = {
   projectName?: string | null;
   onToggleComplete: (id: string, isCompleted: boolean) => void;
   onDelete: (id: string) => void;
+  onPress?: () => void;
 };
 
 const SWIPE_THRESHOLD = 80;
-const MAX_SWIPE = -100;
+const MAX_SWIPE_LEFT = -100;
+const MAX_SWIPE_RIGHT = 100;
 const DELETE_ANIMATION_TARGET = -400;
 const DELETE_ANIMATION_DURATION = 200;
 
@@ -35,6 +37,7 @@ export function SwipeableTaskCard({
   projectName,
   onToggleComplete,
   onDelete,
+  onPress,
 }: SwipeableTaskCardProps) {
   const translateX = useSharedValue(0);
 
@@ -45,6 +48,12 @@ export function SwipeableTaskCard({
   const handleDelete = useCallback(() => {
     onDelete(id);
   }, [id, onDelete]);
+
+  const handlePress = useCallback(() => {
+    if (onPress) {
+      onPress();
+    }
+  }, [onPress]);
 
   const getCheckboxStyle = () => {
     if (isCompleted) {
@@ -59,45 +68,78 @@ export function SwipeableTaskCard({
   const panGesture = Gesture.Pan()
     .activeOffsetX([-10, 10])
     .onUpdate((event) => {
-      // Allow swiping left (negative X) only, capped at MAX_SWIPE
-      if (event.translationX < 0) {
-        translateX.value = Math.max(event.translationX, MAX_SWIPE);
+      translateX.value = event.translationX;
+      // Limit swipe distance
+      if (translateX.value < MAX_SWIPE_LEFT) {
+        translateX.value = MAX_SWIPE_LEFT;
+      }
+      if (translateX.value > MAX_SWIPE_RIGHT) {
+        translateX.value = MAX_SWIPE_RIGHT;
       }
     })
     .onEnd(() => {
       if (translateX.value < -SWIPE_THRESHOLD) {
-        // Trigger delete when swiped past threshold
+        // Swipe Left -> Delete
         runOnJS(handleDelete)();
         translateX.value = withTiming(DELETE_ANIMATION_TARGET, {
           duration: DELETE_ANIMATION_DURATION,
         });
+      } else if (translateX.value > SWIPE_THRESHOLD) {
+        // Swipe Right -> Complete
+        runOnJS(handleToggle)();
+        translateX.value = withSpring(0);
       } else {
         // Snap back
         translateX.value = withSpring(0);
       }
     });
 
+  const tapGesture = Gesture.Tap().onEnd(() => {
+    runOnJS(handlePress)();
+  });
+
+  const composedGesture = Gesture.Race(panGesture, tapGesture);
+
   const animatedCardStyle = useAnimatedStyle(() => ({
     transform: [{ translateX: translateX.value }],
   }));
 
-  const animatedActionStyle = useAnimatedStyle(() => ({
-    opacity: Math.min(Math.abs(translateX.value) / SWIPE_THRESHOLD, 1),
+  const animatedDeleteStyle = useAnimatedStyle(() => ({
+    opacity:
+      translateX.value < 0
+        ? Math.min(Math.abs(translateX.value) / SWIPE_THRESHOLD, 1)
+        : 0,
+  }));
+
+  const animatedCompleteStyle = useAnimatedStyle(() => ({
+    opacity:
+      translateX.value > 0
+        ? Math.min(Math.abs(translateX.value) / SWIPE_THRESHOLD, 1)
+        : 0,
   }));
 
   return (
     <View className="relative mb-3 overflow-hidden rounded-xl">
-      {/* Delete action behind the card */}
+      {/* Delete action (Right side, revealed on Left swipe) */}
       <Animated.View
         className="absolute top-0 right-0 bottom-0 w-24 items-center justify-center bg-destructive"
-        style={animatedActionStyle}
+        style={animatedDeleteStyle}
       >
         <Ionicons color="#fff" name="trash-outline" size={24} />
         <Text className="mt-1 font-medium text-white text-xs">Delete</Text>
       </Animated.View>
 
+      {/* Complete action (Left side, revealed on Right swipe) */}
+      <Animated.View
+        className="absolute top-0 bottom-0 left-0 w-24 items-center justify-center bg-success"
+        style={animatedCompleteStyle}
+      >
+        <Ionicons color="#fff" name="checkmark-circle-outline" size={24} />
+        <Text className="mt-1 font-medium text-white text-xs">Complete</Text>
+      </Animated.View>
+
       {/* Swipeable card */}
-      <GestureDetector gesture={panGesture}>
+      <GestureDetector gesture={composedGesture}>
         <Animated.View
           className="flex-row items-start bg-card p-4"
           style={animatedCardStyle}

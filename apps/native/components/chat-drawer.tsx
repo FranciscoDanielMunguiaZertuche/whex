@@ -1,11 +1,17 @@
 import { useRouter } from "expo-router";
-import { Bot, LayoutGrid, Plus, Search } from "lucide-react-native";
+import {
+  Bot,
+  HelpCircle,
+  Plus,
+  Search,
+  Settings,
+  Target,
+} from "lucide-react-native";
 import { useEffect } from "react";
 import {
   Dimensions,
   Modal,
   ScrollView,
-  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -90,85 +96,76 @@ export function ChatDrawer({ isOpen, onClose }: ChatDrawerProps) {
           <SafeAreaView className="flex-1" edges={["top", "bottom"]}>
             <View className="flex-1 p-4">
               {/* Search Bar */}
-              <View className="mb-6 flex-row items-center rounded-lg bg-secondary/50 px-3 py-2">
+              <TouchableOpacity
+                className="mb-6 flex-row items-center rounded-lg bg-secondary/50 px-3 py-2 active:bg-secondary"
+                onPress={() => {
+                  onClose();
+                  router.push("/search");
+                }}
+              >
                 <Search color={theme.colors.mutedForeground} size={18} />
-                <TextInput
-                  className="ml-2 flex-1 font-medium text-foreground"
-                  placeholder="Search"
-                  placeholderTextColor={theme.colors.mutedForeground}
-                />
-              </View>
+                <Text className="ml-2 flex-1 font-medium text-muted-foreground">
+                  Search
+                </Text>
+              </TouchableOpacity>
 
               <ScrollView
                 className="flex-1"
                 showsVerticalScrollIndicator={false}
               >
                 {/* Main Menu Items */}
-                <View className="mb-6 gap-1">
-                  <TouchableOpacity className="flex-row items-center gap-3 rounded-lg bg-secondary/20 px-3 py-3">
-                    <View className="h-6 w-6 items-center justify-center rounded-full bg-foreground">
-                      <Bot color={theme.colors.background} size={14} />
-                    </View>
-                    <Text className="font-semibold text-foreground">
-                      ChatGPT
-                    </Text>
-                  </TouchableOpacity>
-
-                  <TouchableOpacity className="flex-row items-center gap-3 rounded-lg px-3 py-3">
-                    <LayoutGrid color={theme.colors.foreground} size={20} />
-                    <Text className="font-medium text-foreground">Library</Text>
-                  </TouchableOpacity>
-
-                  <TouchableOpacity className="flex-row items-center gap-3 rounded-lg px-3 py-3">
-                    <Bot color={theme.colors.foreground} size={20} />
-                    <Text className="font-medium text-foreground">GPTs</Text>
-                  </TouchableOpacity>
-                </View>
-
-                {/* Projects */}
-                <View className="mb-6 gap-1">
-                  <TouchableOpacity className="flex-row items-center gap-3 rounded-lg px-3 py-3">
-                    <Plus color={theme.colors.foreground} size={20} />
-                    <Text className="font-medium text-foreground">
-                      New project
-                    </Text>
-                  </TouchableOpacity>
-
-                  <TouchableOpacity className="flex-row items-center gap-3 rounded-lg px-3 py-3">
-                    <View className="h-5 w-5 items-center justify-center rounded-full border border-green-500">
-                      <Text className="text-[10px] text-green-500">$</Text>
-                    </View>
-                    <Text className="font-medium text-foreground">
-                      Investing
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-
-                {/* History */}
                 <View className="gap-1">
-                  <Text className="mb-2 px-3 font-medium text-muted-foreground text-xs">
-                    Yesterday
-                  </Text>
-                  {[
-                    "App screen order analysis",
-                    "Función Booleana XOR",
-                    "Create mind map frogs",
-                    "Crear playlist de enfoque",
-                    "Presentación de perros",
-                    "Base conversions explained",
-                  ].map((item) => (
-                    <TouchableOpacity
-                      className="rounded-lg px-3 py-2 active:bg-secondary/20"
-                      key={item}
-                    >
-                      <Text
-                        className="text-foreground/90 text-sm"
-                        numberOfLines={1}
-                      >
-                        {item}
-                      </Text>
-                    </TouchableOpacity>
-                  ))}
+                  <TouchableOpacity
+                    className="flex-row items-center gap-3 rounded-lg px-3 py-3 active:bg-secondary/20"
+                    onPress={() => {
+                      router.push("/profile");
+                      onClose();
+                    }}
+                  >
+                    <Target color={theme.colors.foreground} size={20} />
+                    <Text className="font-medium text-foreground">
+                      Goals & Projects
+                    </Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    className="flex-row items-center gap-3 rounded-lg px-3 py-3 active:bg-secondary/20"
+                    onPress={() => {
+                      // TODO: Navigate to AI Assistants
+                      onClose();
+                    }}
+                  >
+                    <Bot color={theme.colors.foreground} size={20} />
+                    <Text className="font-medium text-foreground">
+                      AI Assistants
+                    </Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    className="flex-row items-center gap-3 rounded-lg px-3 py-3 active:bg-secondary/20"
+                    onPress={() => {
+                      onClose();
+                      router.push("/settings");
+                    }}
+                  >
+                    <Settings color={theme.colors.foreground} size={20} />
+                    <Text className="font-medium text-foreground">
+                      Settings
+                    </Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    className="flex-row items-center gap-3 rounded-lg px-3 py-3 active:bg-secondary/20"
+                    onPress={() => {
+                      // TODO: Navigate to Help & Support
+                      onClose();
+                    }}
+                  >
+                    <HelpCircle color={theme.colors.foreground} size={20} />
+                    <Text className="font-medium text-foreground">
+                      Help & Support
+                    </Text>
+                  </TouchableOpacity>
                 </View>
               </ScrollView>
 

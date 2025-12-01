@@ -1,3 +1,4 @@
+import { useRouter } from "expo-router";
 import {
   BarChart2,
   Briefcase,
@@ -19,6 +20,7 @@ import { useDrawer } from "@/lib/drawer-context";
 import { useTheme } from "@/lib/theme-context";
 
 export default function ProfileScreen() {
+  const router = useRouter();
   const { theme } = useTheme();
   const { openDrawer } = useDrawer();
 
@@ -33,9 +35,23 @@ export default function ProfileScreen() {
           <View className="h-10 w-10 items-center justify-center rounded-full bg-primary/10">
             <User color={theme.colors.primary} size={20} />
           </View>
-          <Text className="font-bold text-foreground text-xl">You</Text>
+          <View>
+            <Text className="font-bold text-foreground text-xl">You</Text>
+            <View className="self-start rounded-full bg-muted px-2 py-0.5">
+              <Text className="font-medium text-[10px] text-muted-foreground">
+                Free Plan
+              </Text>
+            </View>
+          </View>
         </View>
-        <Button size="icon" variant="ghost">
+        <Button
+          onPress={() =>
+            // biome-ignore lint/suspicious/noExplicitAny: router type workaround
+            router.push("/settings" as any)
+          }
+          size="icon"
+          variant="ghost"
+        >
           <Settings color={theme.colors.foreground} size={24} />
         </Button>
       </View>
@@ -45,6 +61,18 @@ export default function ProfileScreen() {
         contentContainerStyle={{ paddingBottom: 100 }}
         showsVerticalScrollIndicator={false}
       >
+        {/* Stats */}
+        <View className="mb-6 flex-row gap-3 px-5 pt-2">
+          <View className="flex-1 rounded-xl border border-border bg-card p-4">
+            <Text className="font-bold text-2xl text-foreground">12</Text>
+            <Text className="text-muted-foreground text-xs">Tasks Done</Text>
+          </View>
+          <View className="flex-1 rounded-xl border border-border bg-card p-4">
+            <Text className="font-bold text-2xl text-foreground">85%</Text>
+            <Text className="text-muted-foreground text-xs">Focus Score</Text>
+          </View>
+        </View>
+
         {/* North Star Card */}
         <View className="mx-5 mt-2 mb-6 overflow-hidden rounded-2xl border border-primary/10 bg-primary/5">
           <View className="flex-row items-center gap-2 bg-primary/10 px-4 py-3">
@@ -91,7 +119,10 @@ export default function ProfileScreen() {
           </View>
 
           <View className="gap-3">
-            <TouchableOpacity className="rounded-xl border border-border bg-card p-4">
+            <TouchableOpacity
+              className="rounded-xl border border-border bg-card p-4"
+              onPress={() => router.push("/goal/1")}
+            >
               <View className="mb-2 flex-row items-start justify-between">
                 <Text className="font-semibold text-base text-foreground">
                   Launch Product V1
@@ -110,7 +141,10 @@ export default function ProfileScreen() {
               </Text>
             </TouchableOpacity>
 
-            <TouchableOpacity className="rounded-xl border border-border bg-card p-4">
+            <TouchableOpacity
+              className="rounded-xl border border-border bg-card p-4"
+              onPress={() => router.push("/goal/2")}
+            >
               <View className="mb-2 flex-row items-start justify-between">
                 <Text className="font-semibold text-base text-foreground">
                   Run 3x per week
@@ -157,7 +191,10 @@ export default function ProfileScreen() {
           </View>
 
           <View className="gap-3">
-            <TouchableOpacity className="flex-row items-center justify-between rounded-xl border border-border bg-card p-4">
+            <TouchableOpacity
+              className="flex-row items-center justify-between rounded-xl border border-border bg-card p-4"
+              onPress={() => router.push("/project/1")}
+            >
               <View className="flex-row items-center gap-3">
                 <View className="h-10 w-10 items-center justify-center rounded-lg bg-blue-500/10">
                   <BarChart2 color="#3B82F6" size={20} />
@@ -172,7 +209,10 @@ export default function ProfileScreen() {
               <ChevronRight color={theme.colors.mutedForeground} size={16} />
             </TouchableOpacity>
 
-            <TouchableOpacity className="flex-row items-center justify-between rounded-xl border border-border bg-card p-4">
+            <TouchableOpacity
+              className="flex-row items-center justify-between rounded-xl border border-border bg-card p-4"
+              onPress={() => router.push("/project/2")}
+            >
               <View className="flex-row items-center gap-3">
                 <View className="h-10 w-10 items-center justify-center rounded-lg bg-purple-500/10">
                   <Briefcase color="#A855F7" size={20} />
