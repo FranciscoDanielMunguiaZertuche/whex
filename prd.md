@@ -483,7 +483,6 @@ A task is marked as "Priority" if:
 **Interaction:**
 - **Tap checkbox** → Mark complete (satisfying animation, confetti for streaks)
 - **Tap card** → Navigate to Task Detail Screen (S6)
-- **Swipe right** → Mark complete
 - **Swipe left** → Quick reschedule menu
 - **Long press** → Quick actions (Edit, Reschedule, Mark Priority, Delete)
 
@@ -869,7 +868,6 @@ The Calendar screen is a full-screen, intelligent calendar combining:
 - Tap event/task → Opens detail screen (S6 or S7)
 
 **Swipe Actions:**
-- Swipe right on task → Mark complete
 - Swipe left on task → Reschedule menu or Delete
 
 #### 7.16.6 AI Calendar Management
@@ -2336,7 +2334,6 @@ This approach saves a bottom nav slot while keeping search always accessible.
 **Standard Gestures:**
 - **Tap:** Select, activate
 - **Long Press:** Quick actions menu
-- **Swipe Right:** Mark complete (contextual)
 - **Swipe Left:** Reschedule or delete (contextual)
 - **Pull-to-Refresh:** Sync data
 - **Pinch:** Zoom calendar view
@@ -2737,7 +2734,7 @@ This approach saves a bottom nav slot while keeping search always accessible.
    ↓
 6. Returns to Tasks list
    ↓
-7. Completes first priority task (swipe right)
+7. Completes first priority task (tap circle)
    ↓
 8. Confetti animation + "1 of 3 done!"
    ↓

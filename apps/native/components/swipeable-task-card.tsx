@@ -24,7 +24,7 @@ export type SwipeableTaskCardProps = {
 
 const SWIPE_THRESHOLD = 80;
 const MAX_SWIPE_LEFT = -100;
-const MAX_SWIPE_RIGHT = 100;
+const MAX_SWIPE_RIGHT = 0; // Disable right swipe
 const DELETE_ANIMATION_TARGET = -400;
 const DELETE_ANIMATION_DURATION = 200;
 
@@ -84,10 +84,6 @@ export function SwipeableTaskCard({
         translateX.value = withTiming(DELETE_ANIMATION_TARGET, {
           duration: DELETE_ANIMATION_DURATION,
         });
-      } else if (translateX.value > SWIPE_THRESHOLD) {
-        // Swipe Right -> Complete
-        runOnJS(handleToggle)();
-        translateX.value = withSpring(0);
       } else {
         // Snap back
         translateX.value = withSpring(0);
@@ -111,13 +107,6 @@ export function SwipeableTaskCard({
         : 0,
   }));
 
-  const animatedCompleteStyle = useAnimatedStyle(() => ({
-    opacity:
-      translateX.value > 0
-        ? Math.min(Math.abs(translateX.value) / SWIPE_THRESHOLD, 1)
-        : 0,
-  }));
-
   return (
     <View className="relative mb-3 overflow-hidden rounded-xl">
       {/* Delete action (Right side, revealed on Left swipe) */}
@@ -127,15 +116,6 @@ export function SwipeableTaskCard({
       >
         <Ionicons color="#fff" name="trash-outline" size={24} />
         <Text className="mt-1 font-medium text-white text-xs">Delete</Text>
-      </Animated.View>
-
-      {/* Complete action (Left side, revealed on Right swipe) */}
-      <Animated.View
-        className="absolute top-0 bottom-0 left-0 w-24 items-center justify-center bg-success"
-        style={animatedCompleteStyle}
-      >
-        <Ionicons color="#fff" name="checkmark-circle-outline" size={24} />
-        <Text className="mt-1 font-medium text-white text-xs">Complete</Text>
       </Animated.View>
 
       {/* Swipeable card */}

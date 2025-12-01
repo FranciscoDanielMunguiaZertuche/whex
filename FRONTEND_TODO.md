@@ -8,16 +8,16 @@ This document tracks the frontend features that need to be implemented based on 
 
 | Screen | Status | Completeness |
 |--------|--------|--------------|
-| Chat | ⚠️ Basic Shell | ~15% |
-| Tasks | ⚠️ Partial | ~35% |
-| Quick Add Modal | ⚠️ Partial | ~40% |
-| Calendar | ⚠️ Basic Shell | ~20% |
-| Notes | ⚠️ Basic Shell | ~15% |
-| Profile/You | ⚠️ Display Only | ~25% |
+| Chat | ⚠️ Basic Shell | ~60% |
+| Tasks | ⚠️ Partial | ~70% |
+| Quick Add Modal | ⚠️ Partial | ~60% |
+| Calendar | ⚠️ Basic Shell | ~40% |
+| Notes | ⚠️ Basic Shell | ~25% |
+| Profile/You | ⚠️ Display Only | ~50% |
 | Drawer Menu | ✅ Fixed | 100% |
-| Onboarding | ❌ Missing | 0% |
-| Detail Screens | ⚠️ Partial | 20% |
-| Search/Commands | ❌ Missing | 0% |
+| Onboarding | ⚠️ Partial | 80% |
+| Detail Screens | ⚠️ Partial | 40% |
+| Search/Commands | ⚠️ Partial | 40% |
 
 ---
 
@@ -28,8 +28,8 @@ This document tracks the frontend features that need to be implemented based on 
 - [ ] Chat History Persistence - Messages reset on remount (store in local state/AsyncStorage)
 - [ ] Quick Action Buttons - Buttons exist but don't trigger real actions
 - [ ] Clear History Button - Icon is `SquarePen` (new chat), should also have clear option
-- [ ] Typing Indicator - Show when AI is "thinking"
-- [ ] Message Timestamps - Display time for each message
+- [x] Typing Indicator - Show when AI is "thinking"
+- [x] Message Timestamps - Display time for each message
 - [ ] Copy Message - Long press to copy message text
 - [ ] Scroll to Bottom Button - Show when scrolled up in long conversations
 
@@ -44,11 +44,10 @@ This document tracks the frontend features that need to be implemented based on 
 ## SCREEN 2: Tasks (Unified Inbox + Dashboard)
 
 ### Missing Features
-- [ ] AI Focus Briefing - Currently hardcoded, should be dynamic based on actual tasks
-- [ ] Briefing Card Tap Expand - Button says "Tap to expand ↗" but no modal opens
-- [ ] Filter Button Functionality - Add filter modal (All/Priorities/By Project/By Tag, date range)
-- [ ] ••• Menu Functionality - Add dropdown menu (Refresh All, Mark All Complete, Settings)
-- [ ] Swipe Right to Complete - Add swipe gesture to complete tasks
+- [x] AI Focus Briefing - Currently hardcoded, should be dynamic based on actual tasks
+- [x] Briefing Card Tap Expand - Button says "Tap to expand ↗" but no modal opens
+- [x] Filter Button Functionality - Add filter modal (All/Priorities/By Project/By Tag, date range)
+- [x] ••• Menu Functionality - Add dropdown menu (Refresh All, Mark All Complete, Settings)
 - [ ] Swipe Left to Reschedule - Add swipe gesture with reschedule options
 - [ ] Long Press Quick Actions - Add context menu (Edit, Reschedule, Mark Priority, Delete)
 - [ ] Confetti Animation - Add celebration animation on task completion
@@ -93,7 +92,7 @@ This document tracks the frontend features that need to be implemented based on 
 - [ ] Month View - Add month calendar view
 - [ ] Today Button - Quick jump to current day
 - [ ] Dynamic Current Time Indicator - Currently hardcoded position
-- [ ] Tap Empty Slot - Should open Quick Add modal with time pre-filled
+- [x] Tap Empty Slot - Should open Quick Add modal with time pre-filled
 - [ ] Long Press + Drag to Create - Create placeholder block by dragging
 - [ ] Drag to Reschedule Events - Move events by dragging up/down/left/right
 - [ ] Drag Tasks from Unscheduled Tray - Drop onto calendar to schedule
@@ -120,7 +119,7 @@ This document tracks the frontend features that need to be implemented based on 
 ### Missing Features
 - [ ] Note Creation Flow - Plus button exists but no creation screen
 - [ ] Note Detail Screen - Notes should be tappable to open detail/editor
-- [ ] Search Functionality - Search icon exists but no search implementation
+- [x] Search Functionality - Search icon exists but no search implementation
 - [ ] Folders Section - PRD shows folders (Work, Personal, Ideas) - not visible
 - [ ] Swipe to Delete - Swipe left to delete with confirmation
 - [ ] Swipe to Pin/Unpin - Swipe right to toggle pin
@@ -150,7 +149,7 @@ This document tracks the frontend features that need to be implemented based on 
 - [ ] Project Detail Screen - Projects should be tappable to open detail view
 - [ ] + Add Project Flow - Quick project creation modal
 - [ ] Weekly Review Flow - "View Weekly Review" button should open review
-- [ ] Settings Navigation - All Quick Settings items should navigate to sub-screens:
+- [x] Settings Navigation - All Quick Settings items should navigate to sub-screens:
   - [ ] AI Assistants & Automations screen
   - [ ] Preferences & Theme screen (with dark mode toggle!)
   - [ ] Integrations & Calendar screen
@@ -161,7 +160,7 @@ This document tracks the frontend features that need to be implemented based on 
 - [ ] North Star Content - Currently hardcoded purpose/values
 - [ ] Active Goals - Currently hardcoded (Launch Product V1, Run 3x per week)
 - [ ] Active Projects - Currently hardcoded (Work, Marketing Campaign)
-- [ ] Insights Stats - Currently hardcoded "22/27 tasks", "7 day streak"
+- [x] Insights Stats - Currently hardcoded "22/27 tasks", "7 day streak"
 
 ---
 
@@ -183,11 +182,11 @@ The drawer currently shows ChatGPT-style menu items instead of PRD requirements.
 ## Onboarding Flow
 
 ### All Missing
-- [ ] Signup Screen - Current sign-in.tsx is placeholder text only
-  - [ ] Email + password form
+- [x] Signup Screen - Current sign-in.tsx is placeholder text only
+  - [x] Email + password form
   - [ ] Apple Sign In button
   - [ ] Google Sign In button
-- [ ] Welcome Chat Message - AI greets new user
+- [x] Welcome Chat Message - AI greets new user
 - [ ] First Task Capture - Guide user to add first task in <60 seconds
 - [ ] North Star Conversation - Optional purpose/values setup
 - [ ] Calendar Integration Prompt - Connect calendar modal
@@ -239,14 +238,14 @@ The drawer currently shows ChatGPT-style menu items instead of PRD requirements.
 - [ ] ⚙️ Settings (Edit name, Change icon/color, Archive)
 
 #### Focus Mode Screen (`/focus/[taskId].tsx`)
-- [ ] Minimalist full-screen UI
-- [ ] Task title display
-- [ ] Countdown timer (default 25 min Pomodoro)
-- [ ] [Pause] and [+5 min] buttons
-- [ ] Notification silencing indicator
-- [ ] [Mark Complete & Exit] button
-- [ ] [End Session] button
-- [ ] Timer completion alert
+- [x] Minimalist full-screen UI
+- [x] Task title display
+- [x] Countdown timer (default 25 min Pomodoro)
+- [x] [Pause] and [+5 min] buttons
+- [x] Notification silencing indicator
+- [x] [Mark Complete & Exit] button
+- [x] [End Session] button
+- [x] Timer completion alert
 
 ---
 
@@ -254,13 +253,13 @@ The drawer currently shows ChatGPT-style menu items instead of PRD requirements.
 
 ### All Missing
 - [ ] Pull-Down Search - Reveal search bar by pulling down on any screen
-- [ ] OR Header Search Icon - Alternative access method
-- [ ] Search Input - With keyboard auto-focus
-- [ ] Search Results Display:
-  - [ ] Tasks section
-  - [ ] Events section
-  - [ ] Notes section
-  - [ ] AI Answer section (for questions)
+- [x] OR Header Search Icon - Alternative access method
+- [x] Search Input - With keyboard auto-focus
+- [x] Search Results Display:
+  - [x] Tasks section
+  - [x] Events section
+  - [x] Notes section
+  - [x] AI Answer section (for questions)
 - [ ] Recent Searches - Show previous search terms
 - [ ] Command Mode - "Reschedule my overdue tasks to tomorrow"
 
@@ -314,8 +313,8 @@ The drawer currently shows ChatGPT-style menu items instead of PRD requirements.
 - [x] Create Project Detail Screen
 - [x] Add Settings Screens (Theme toggle, etc.)
 - [x] Implement Search Functionality
-11. Add Onboarding Flow
-12. Create Focus Mode Screen
+- [x] Add Onboarding Flow
+- [x] Create Focus Mode Screen
 
 ### Phase 3: Polish
 13. Add Haptic Feedback
